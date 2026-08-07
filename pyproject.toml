@@ -67,5 +67,5 @@ testpaths = ["tests"]
 addopts = "-ra"
 filterwarnings = [
     # Emitted by Starlette's TestClient shim; not actionable in application code.
-    "ignore:Using `httpx` with `starlette.testclient`:DeprecationWarning",
+    "ignore:Using `httpx` with `starlette.testclient`",
 ]
