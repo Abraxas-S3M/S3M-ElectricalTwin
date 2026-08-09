@@ -9,6 +9,12 @@ Keeping these separate is deliberate: a value can be measured telemetry
 (high-quality provenance) yet still be unvalidated, and a value can be a manual
 engineering estimate (weaker provenance) yet field-verified. The definitions are
 exposed verbatim through the API so operators and auditors share one vocabulary.
+"""Provenance primitives.
+
+Every substantive value in the canonical model is provenance-labelled so that
+downstream analytics can reason about *where a number came from* and *how much
+to trust it*. Provenance is descriptive metadata only; it never carries a
+control action.
 """
 
 from __future__ import annotations
@@ -98,3 +104,50 @@ def provenance_vocabulary() -> dict[str, dict[str, str]]:
         "data_provenance": dict(DATA_PROVENANCE_DEFINITIONS),
         "validation_state": dict(VALIDATION_STATE_DEFINITIONS),
     }
+from datetime import datetime
+from enum import Enum
+from typing import Generic, Optional, TypeVar
+
+from pydantic import Field
+
+from .common import CanonicalModel
+
+
+class ProvenanceSource(str, Enum):
+    """Origin of a value."""
+
+    MEASURED = "MEASURED"
+    NAMEPLATE = "NAMEPLATE"
+    DERIVED = "DERIVED"
+    CALCULATED = "CALCULATED"
+    ESTIMATED = "ESTIMATED"
+    INFERRED = "INFERRED"
+    MANUAL_ENTRY = "MANUAL_ENTRY"
+    SIMULATED = "SIMULATED"
+    SYNTHETIC = "SYNTHETIC"
+    UNKNOWN = "UNKNOWN"
+
+
+class Provenance(CanonicalModel):
+    """Descriptive label recording where a value came from."""
+
+    source: ProvenanceSource = ProvenanceSource.UNKNOWN
+    method: Optional[str] = None
+    recorded_at: Optional[datetime] = None
+    reference: Optional[str] = None
+    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+
+
+T = TypeVar("T")
+
+
+class Provenanced(CanonicalModel, Generic[T]):
+    """A value paired with its provenance label.
+
+    Used to give individual fields their own provenance (for example, the
+    rated voltage of a transformer may be NAMEPLATE while its measured load
+    loss is MEASURED).
+    """
+
+    value: T
+    provenance: Provenance = Field(default_factory=Provenance)

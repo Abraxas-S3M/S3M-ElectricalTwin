@@ -11,3 +11,7 @@ This namespace groups the domain libraries that are shared across services:
 Nothing in this namespace performs an LLM invocation. Work Package 0 defines the
 contract, the guardrails and the vocabularies only.
 """
+"""Canonical top-level namespace for S3M ElectricalTwin packages."""
+"""Namespace package root for S3M ElectricalTwin engineering packages."""
+"""Namespace package root for S3M ElectricalTwin canonical packages."""
+"""S3M ElectricalTwin package namespace."""
