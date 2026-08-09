@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "s3m-electrical-twin"
+version = "0.0.0"
+description = "S3M ElectricalTwin canonical models (observe-only, pydantic v2)."
+name = "canonical-electrical-model"
+version = "0.1.0"
+description = "Canonical enumerations and value vocabularies for the S3M ElectricalTwin domain model."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2,<3",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7",
+]
+
+[tool.setuptools.packages.find]
+include = ["packages*"]
+
+[tool.pytest.ini_options]
+testpaths = ["packages"]
+name = "s3m-electricaltwin"
+version = "0.0.0"
+description = "S3M ElectricalTwin — an advisory, read-only AI digital twin for facility electrical infrastructure."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+
+dependencies = [
+    "pydantic>=2,<3",
+    "fastapi",
+    "uvicorn",
+    "httpx",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+
+[tool.setuptools]
+# This repository uses an explicit, path-based layout rather than an
+# installable distribution. Packaging metadata is present for tooling only.
+py-modules = []
+
+[tool.pytest.ini_options]
+# Put packages/ and the API service on the import path.
+pythonpath = ["packages", "services/electricaltwin-api"]
+addopts = "--cov=packages --cov=services --cov-report=term-missing"
+testpaths = ["packages/tests", "services/electricaltwin-api/tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = [".git"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+# Put packages/ and the API service on the type-check path.
+mypy_path = "packages:services/electricaltwin-api"
+namespace_packages = true
+explicit_package_bases = true
+ignore_missing_imports = true
+warn_unused_ignores = true
