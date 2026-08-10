@@ -21,7 +21,9 @@ from .card import (
     Claim,
     ClaimKind,
     FinancialExposure,
+    GroundingCoverage,
     GroundingReport,
+    GroundingViolation,
     RecommendationCard,
     RecommendationConfidence,
 )
@@ -56,6 +58,8 @@ __all__ = [
     # card
     "ClaimKind",
     "Claim",
+    "GroundingCoverage",
+    "GroundingViolation",
     "GroundingReport",
     "FinancialExposure",
     "RecommendationConfidence",

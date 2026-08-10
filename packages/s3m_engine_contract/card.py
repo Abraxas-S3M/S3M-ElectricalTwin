@@ -12,9 +12,8 @@ operator, and nothing here controls anything. All data is synthetic.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
 
@@ -22,6 +21,7 @@ from packages.canonical_electrical_model import (
     ApprovalStatus,
     ControlBoundary,
     Evidence,
+    HealthBand,
     RankedCause,
     ValidationState,
 )
@@ -58,10 +58,11 @@ class Claim(BaseModel):
     text: str
     claim_kind: ClaimKind
     evidence_ids: list[str] = Field(default_factory=list)
+    numeric_value: float | None = None
     resolved: bool = False
 
 
-class GroundingReport(BaseModel):
+class GroundingCoverage(BaseModel):
     """A summary of whether the card's claims are grounded in evidence."""
 
     model_config = ConfigDict(extra="forbid")
@@ -69,7 +70,41 @@ class GroundingReport(BaseModel):
     grounded: bool = False
     resolved_claim_ids: list[str] = Field(default_factory=list)
     unresolved_claim_ids: list[str] = Field(default_factory=list)
-    notes: Optional[str] = None
+    notes: str | None = None
+
+
+class GroundingViolation(BaseModel):
+    """A single failure recorded by the deterministic grounding gate.
+
+    ``code`` is a stable, machine-readable check code (see
+    :class:`~packages.s3m_engine_contract.grounding.GroundingCheck`);
+    ``claim_id`` names the offending claim when the violation is attributable to
+    one, and is ``None`` for structural (card-level) violations.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    code: str
+    severity: str
+    detail: str
+    claim_id: str | None = None
+
+
+class GroundingReport(BaseModel):
+    """The verdict of the deterministic grounding gate for one card.
+
+    Produced by :func:`~packages.s3m_engine_contract.grounding.verify_grounding`.
+    ``passed`` is ``True`` only when ``violations`` is empty; ``stripped_claim_ids``
+    records claims removed by
+    :func:`~packages.s3m_engine_contract.grounding.enforce`.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    passed: bool
+    violations: list[GroundingViolation] = Field(default_factory=list)
+    stripped_claim_ids: list[str] = Field(default_factory=list)
+    checked_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class FinancialExposure(BaseModel):
@@ -79,9 +114,9 @@ class FinancialExposure(BaseModel):
 
     currency: str = "USD"
     expected_amount: float = Field(ge=0.0)
-    low: Optional[float] = Field(default=None, ge=0.0)
-    high: Optional[float] = Field(default=None, ge=0.0)
-    basis: Optional[str] = None
+    low: float | None = Field(default=None, ge=0.0)
+    high: float | None = Field(default=None, ge=0.0)
+    basis: str | None = None
 
 
 class RecommendationConfidence(BaseModel):
@@ -135,17 +170,23 @@ class RecommendationCard(BaseModel):
     rationale: str
     evidence: list[Evidence] = Field(default_factory=list)
     ranked_causes: list[RankedCause] = Field(default_factory=list)
-    recommended_inspection: Optional[str] = None
-    recommended_action: Optional[str] = None
-    estimated_financial_exposure: Optional[FinancialExposure] = None
+    recommended_inspection: str | None = None
+    recommended_action: str | None = None
+    estimated_financial_exposure: FinancialExposure | None = None
+    health_band: HealthBand | None = None
+    is_demonstration: bool = False
+    insufficient_data_reasons: list[str] = Field(default_factory=list)
     validation_state: ValidationState = ValidationState.PENDING
     control_boundary: ControlBoundary = Field(
         default_factory=lambda: ControlBoundary(
-            rationale="RecommendationCard is advisory; it requires human approval and performs no control write."
+            rationale=(
+                "RecommendationCard is advisory; it requires human approval and "
+                "performs no control write."
+            )
         )
     )
     approval_status: ApprovalStatus = ApprovalStatus.PENDING_OPERATOR_REVIEW
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     packet_id: str
     packet_hash: str
     engine_class: EngineClass
@@ -155,12 +196,13 @@ class RecommendationCard(BaseModel):
     model_version: str = "none"
     prompt_template_version: str = "none"
     output_hash: str = ""
-    grounding_report: Optional[GroundingReport] = None
+    grounding_coverage: GroundingCoverage | None = None
+    grounding_report: GroundingReport | None = None
     confidence: RecommendationConfidence
     claims: list[Claim] = Field(default_factory=list)
 
     @model_validator(mode="after")
-    def _require_evidence_for_factual_claims(self) -> "RecommendationCard":
+    def _require_evidence_for_factual_claims(self) -> RecommendationCard:
         offenders = [
             claim.claim_id
             for claim in self.claims
@@ -177,6 +219,8 @@ class RecommendationCard(BaseModel):
 __all__ = [
     "ClaimKind",
     "Claim",
+    "GroundingCoverage",
+    "GroundingViolation",
     "GroundingReport",
     "FinancialExposure",
     "RecommendationConfidence",

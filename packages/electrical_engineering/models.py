@@ -7,8 +7,8 @@ be used freely in sets and as dictionary keys.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Mapping, Optional
 
 from .enums import (
     Criticality,
@@ -64,10 +64,10 @@ class EnergizationResult:
 
     node_id: str
     state: EnergizationState
-    source_node_id: Optional[str] = None
+    source_node_id: str | None = None
     path: list[str] = field(default_factory=list)
     is_backfed: bool = False
-    indeterminate_reason: Optional[str] = None
+    indeterminate_reason: str | None = None
 
 
 @dataclass(frozen=True)

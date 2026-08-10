@@ -35,8 +35,8 @@ def test_ieee519_tdd_brackets_are_ascending_and_nonoverlapping():
     for lower, upper, tdd in brackets:
         assert lower < upper
         assert tdd > 0
-    for (l1, u1, _), (l2, u2, _) in zip(brackets, brackets[1:]):
-        assert u1 == l2  # contiguous, non-overlapping
+    for lower, upper in zip(brackets, brackets[1:], strict=False):
+        assert upper[0] == lower[1]  # contiguous, non-overlapping
 
 
 def test_nema_derating_curve_is_monotonic_non_increasing():

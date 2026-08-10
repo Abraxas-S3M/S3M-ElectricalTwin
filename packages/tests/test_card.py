@@ -53,16 +53,41 @@ def test_card_with_uncited_numeric_claim_fails_validation():
 
 def test_card_with_uncited_categorical_or_causal_claim_fails():
     with pytest.raises(ValidationError):
-        _card([Claim(claim_id="c2", text="Transformer is degraded", claim_kind=ClaimKind.CATEGORICAL)])
+        _card(
+            [
+                Claim(
+                    claim_id="c2",
+                    text="Transformer is degraded",
+                    claim_kind=ClaimKind.CATEGORICAL,
+                )
+            ]
+        )
     with pytest.raises(ValidationError):
-        _card([Claim(claim_id="c3", text="Sag caused by upstream fault", claim_kind=ClaimKind.CAUSAL)])
+        _card(
+            [
+                Claim(
+                    claim_id="c3",
+                    text="Sag caused by upstream fault",
+                    claim_kind=ClaimKind.CAUSAL,
+                )
+            ]
+        )
 
 
 def test_card_with_cited_factual_claims_is_valid():
     card = _card(
         [
-            Claim(claim_id="c1", text="Load is 250 A", claim_kind=ClaimKind.NUMERIC, evidence_ids=["e1"]),
-            Claim(claim_id="c4", text="Consider a thermal inspection", claim_kind=ClaimKind.RECOMMENDATION),
+            Claim(
+                claim_id="c1",
+                text="Load is 250 A",
+                claim_kind=ClaimKind.NUMERIC,
+                evidence_ids=["e1"],
+            ),
+            Claim(
+                claim_id="c4",
+                text="Consider a thermal inspection",
+                claim_kind=ClaimKind.RECOMMENDATION,
+            ),
             Claim(claim_id="c5", text="During peak demand", claim_kind=ClaimKind.CONTEXTUAL),
         ]
     )
@@ -72,7 +97,9 @@ def test_card_with_cited_factual_claims_is_valid():
 
 
 def test_advisory_claims_need_no_evidence():
-    card = _card([Claim(claim_id="c6", text="Recommend follow-up", claim_kind=ClaimKind.RECOMMENDATION)])
+    card = _card(
+        [Claim(claim_id="c6", text="Recommend follow-up", claim_kind=ClaimKind.RECOMMENDATION)]
+    )
     assert card.claims[0].evidence_ids == []
 
 

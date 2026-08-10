@@ -8,8 +8,6 @@ and *rated* reality only, and callers cannot smuggle in an unexpected field
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -30,11 +28,11 @@ class CanonicalModel(BaseModel):
 class Location(CanonicalModel):
     """Physical location of an asset. All fields optional and synthetic."""
 
-    site: Optional[str] = None
-    building: Optional[str] = None
-    floor: Optional[str] = None
-    room: Optional[str] = None
-    area: Optional[str] = None
-    latitude: Optional[float] = Field(default=None, ge=-90.0, le=90.0)
-    longitude: Optional[float] = Field(default=None, ge=-180.0, le=180.0)
-    description: Optional[str] = None
+    site: str | None = None
+    building: str | None = None
+    floor: str | None = None
+    room: str | None = None
+    area: str | None = None
+    latitude: float | None = Field(default=None, ge=-90.0, le=90.0)
+    longitude: float | None = Field(default=None, ge=-180.0, le=180.0)
+    description: str | None = None

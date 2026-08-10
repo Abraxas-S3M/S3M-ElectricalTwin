@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pydantic import ValidationError
@@ -26,8 +26,8 @@ from packages.canonical_electrical_model import (
     ValidationState,
 )
 
-_T0 = datetime(2026, 3, 1, tzinfo=timezone.utc)
-_T1 = datetime(2026, 3, 1, 0, 5, tzinfo=timezone.utc)
+_T0 = datetime(2026, 3, 1, tzinfo=UTC)
+_T1 = datetime(2026, 3, 1, 0, 5, tzinfo=UTC)
 
 
 def test_reading_confidence_bounds():
@@ -95,7 +95,12 @@ def test_analytic_contracts_instantiate():
         itic_region=ITICRegion.NO_DAMAGE,
         evidence=[ev],
     )
-    cause = RankedCause(hypothesis="upstream tap change", rank=1, likelihood=0.7, supporting_evidence=[ev])
+    cause = RankedCause(
+        hypothesis="upstream tap change",
+        rank=1,
+        likelihood=0.7,
+        supporting_evidence=[ev],
+    )
 
     assert score.score == 82.5
     assert anomaly.severity is Severity.HIGH

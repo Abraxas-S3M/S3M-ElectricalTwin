@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
 from pydantic import Field
 
@@ -36,10 +36,10 @@ class Provenance(CanonicalModel):
     """Descriptive label recording where a value came from."""
 
     source: ProvenanceSource = ProvenanceSource.UNKNOWN
-    method: Optional[str] = None
-    recorded_at: Optional[datetime] = None
-    reference: Optional[str] = None
-    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    method: str | None = None
+    recorded_at: datetime | None = None
+    reference: str | None = None
+    confidence: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 T = TypeVar("T")

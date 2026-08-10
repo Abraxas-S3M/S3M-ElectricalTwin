@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 
 from packages.canonical_electrical_model import (
     AssetType,
@@ -81,7 +81,7 @@ def test_topology_expresses_cycles_via_tie_breaker():
     snap = TopologySnapshot(
         snapshot_id="snap-1",
         facility_id="fac-1",
-        captured_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+        captured_at=datetime(2026, 1, 1, tzinfo=UTC),
         nodes=nodes,
         edges=edges,
         sources=[SourceNode(node_id="busA", source_type=SourceType.UTILITY, priority=0)],
@@ -102,7 +102,7 @@ def test_topology_snapshot_round_trips_through_json():
     snap = TopologySnapshot(
         snapshot_id="snap-json",
         facility_id="fac-1",
-        captured_at=datetime(2026, 2, 3, 4, 5, 6, tzinfo=timezone.utc),
+        captured_at=datetime(2026, 2, 3, 4, 5, 6, tzinfo=UTC),
         nodes=[node],
         edges=[
             ElectricalEdge(
@@ -115,7 +115,14 @@ def test_topology_snapshot_round_trips_through_json():
                 ampacity_a=2000.0,
             )
         ],
-        sources=[SourceNode(node_id="grid", source_type=SourceType.UTILITY, rated_kva=2500.0, priority=0)],
+        sources=[
+            SourceNode(
+                node_id="grid",
+                source_type=SourceType.UTILITY,
+                rated_kva=2500.0,
+                priority=0,
+            )
+        ],
     )
 
     as_json = snap.model_dump_json()

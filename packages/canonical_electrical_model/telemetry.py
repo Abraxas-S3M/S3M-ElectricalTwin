@@ -7,7 +7,6 @@ sensor. There is no channel here that could carry a value *to* an asset.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import Field
 
@@ -21,7 +20,7 @@ class ElectricalReading(CanonicalModel):
 
     node_id: str
     channel: str
-    phase: Optional[PhaseTag] = None
+    phase: PhaseTag | None = None
     value: float
     unit: str
     timestamp: datetime

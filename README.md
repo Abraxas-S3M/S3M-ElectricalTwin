@@ -118,6 +118,36 @@ python -m compileall -q packages services scripts
 These are the same five blocking checks run in CI: `lint`, `typecheck`,
 `test`, `safety-invariant`, and `compile`.
 
+## Engine contract, grounding gate and API
+
+`packages/s3m_engine_contract/` defines the read-only contract the S3M
+reasoning brain speaks through: deterministic routing, the packet an engine
+consumes and the card it emits, plus the **grounding gate**
+(`grounding.py` — a deterministic, no-LLM verifier), the **determinism guard**
+(`determinism.py`), the **refusal path** (`refusal.py`) and the **audit chain**
+(`audit.py`). `services/electricaltwin-api/` exposes an advisory, read-only
+FastAPI service (`/health`, `/safety`, `/meta/provenance`, `/engine/contract`,
+`/engine/grounding-rules`). No language model is invoked anywhere in Work
+Package 0.
+
+## Known limitations
+
+- **In-memory audit chain (WP0 only).** The tamper-evident audit chain in
+  `packages/s3m_engine_contract/audit.py` is an **in-memory** implementation. It
+  exists to pin the audit contract and to prove the hash-chain semantics under
+  test: it keeps the entire chain in process memory, is not concurrency-safe,
+  and does not survive a restart. It **must be replaced by a durable,
+  append-only, PostgreSQL-backed audit service before any pilot deployment.** Do
+  not rely on it for any real auditability guarantee. See
+  [ADR-0008](docs/adr/ADR-0008-determinism-and-reproducibility.md).
+- **No protection-coordination engine.** There is no credible open-source
+  protection-coordination engine; protection settings are modelled as data and
+  time-current-curve coordination, selectivity and arc-flash remain
+  licensed-engineer deliverables. See
+  [ADR-0003](docs/adr/ADR-0003-physics-engine-selection.md).
+- **No LLM in WP0.** Work Package 0 pins the engine contract, grounding gate,
+  determinism guard, refusal path and audit chain. No language model is invoked.
+
 ## License
 
 See [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md) for the licenses of

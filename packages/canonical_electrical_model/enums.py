@@ -129,6 +129,7 @@ class HealthBand(str, Enum):
     AT_RISK = "AT_RISK"
     CRITICAL = "CRITICAL"
     UNKNOWN = "UNKNOWN"
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
 
 
 class ContributionDirection(str, Enum):
@@ -140,13 +141,33 @@ class ContributionDirection(str, Enum):
 
 
 class ValidationState(str, Enum):
-    """Validation lifecycle state of an analytic result."""
+    """Validation lifecycle state of an analytic result or modelled quantity.
+
+    ``CALIBRATED`` is a reserved terminal state describing a model formally
+    calibrated against measurements. It is an out-of-band, operator-governed act
+    and is never assigned by ordinary repository code paths.
+    """
 
     PENDING = "PENDING"
     PROVISIONAL = "PROVISIONAL"
+    PRELIMINARY = "PRELIMINARY"
     VALIDATED = "VALIDATED"
     REJECTED = "REJECTED"
     INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+    CALIBRATED = "CALIBRATED"
+
+
+class DataProvenance(str, Enum):
+    """Origin/lineage classification for a data value."""
+
+    SYNTHETIC = "SYNTHETIC"
+    SIMULATED = "SIMULATED"
+    OPERATOR_ENTERED = "OPERATOR_ENTERED"
+    NAMEPLATE = "NAMEPLATE"
+    CUSTOMER_HISTORIAN = "CUSTOMER_HISTORIAN"
+    CUSTOMER_METER = "CUSTOMER_METER"
+    CUSTOMER_LIMS = "CUSTOMER_LIMS"
+    THIRD_PARTY = "THIRD_PARTY"
 
 
 class Severity(str, Enum):
@@ -223,6 +244,7 @@ __all__ = [
     "HealthBand",
     "ContributionDirection",
     "ValidationState",
+    "DataProvenance",
     "Severity",
     "AnomalyDomain",
     "PowerQualityEventType",

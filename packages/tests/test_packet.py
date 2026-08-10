@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from packages.s3m_engine_contract.packet import (
     DataSufficiency,
@@ -11,8 +11,8 @@ from packages.s3m_engine_contract.packet import (
 )
 from packages.s3m_engine_contract.routing import PacketClass, Urgency
 
-_T0 = datetime(2026, 5, 1, tzinfo=timezone.utc)
-_T1 = datetime(2026, 5, 1, 1, 0, tzinfo=timezone.utc)
+_T0 = datetime(2026, 5, 1, tzinfo=UTC)
+_T1 = datetime(2026, 5, 1, 1, 0, tzinfo=UTC)
 
 
 def _sufficiency() -> DataSufficiency:

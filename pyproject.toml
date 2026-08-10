@@ -11,6 +11,9 @@ requires-python = ">=3.11"
 license = { text = "Proprietary" }
 dependencies = [
     "pydantic>=2,<3",
+    "fastapi",
+    "uvicorn",
+    "httpx",
 ]
 
 [project.optional-dependencies]
@@ -40,11 +43,21 @@ extend-exclude = [".git"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B"]
+# UP042 (prefer ``enum.StrEnum``) is intentionally disabled: the canonical
+# vocabularies are ``str, Enum`` classes with explicit string values equal to
+# their names, which is the round-trip contract the enum consumers rely on.
+ignore = ["UP042"]
 
 [tool.mypy]
 python_version = "3.11"
-mypy_path = "packages:services/electricaltwin-api"
+# Only the repo root and the API service are on the type-check path, so each
+# module has a single canonical name (``packages.<pkg>`` and ``app``); adding
+# ``packages`` here as well would make mypy see modules under two names.
+mypy_path = ".:services/electricaltwin-api"
 namespace_packages = true
 explicit_package_bases = true
 ignore_missing_imports = true
 warn_unused_ignores = true
+# Tests exercise deliberately-invalid inputs and dynamic **kwargs builders and
+# use bare imports; they are not type-checked. Source is fully checked.
+exclude = ['(^|/)tests/']

@@ -14,7 +14,6 @@ raises.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import Field, model_validator
 
@@ -40,11 +39,11 @@ class Evidence(CanonicalModel):
     channel: str
     window_start: datetime
     window_end: datetime
-    observed: Optional[float] = None
-    expected: Optional[float] = None
-    unit: Optional[str] = None
+    observed: float | None = None
+    expected: float | None = None
+    unit: str | None = None
     provenance: Provenance = Field(default_factory=Provenance)
-    source_ref: Optional[str] = None
+    source_ref: str | None = None
 
 
 class HealthContribution(CanonicalModel):
@@ -64,8 +63,8 @@ class HealthScore(CanonicalModel):
     score: float = Field(ge=0.0, le=100.0)
     band: HealthBand
     contributions: list[HealthContribution] = Field(default_factory=list)
-    uncertainty_low: Optional[float] = None
-    uncertainty_high: Optional[float] = None
+    uncertainty_low: float | None = None
+    uncertainty_high: float | None = None
     validation_state: ValidationState = ValidationState.PENDING
     computed_at: datetime
     insufficient_data_reasons: list[str] = Field(default_factory=list)
@@ -78,9 +77,9 @@ class AnomalyResult(CanonicalModel):
     domain: AnomalyDomain
     severity: Severity
     confidence: float = Field(ge=0.0, le=1.0)
-    residual: Optional[float] = None
-    expected: Optional[float] = None
-    observed: Optional[float] = None
+    residual: float | None = None
+    expected: float | None = None
+    observed: float | None = None
     evidence: list[Evidence] = Field(default_factory=list)
     validation_state: ValidationState = ValidationState.PENDING
 
@@ -91,12 +90,12 @@ class PowerQualityEvent(CanonicalModel):
     node_id: str
     event_type: PowerQualityEventType
     started_at: datetime
-    ended_at: Optional[datetime] = None
-    magnitude_pu: Optional[float] = Field(default=None, ge=0.0)
-    duration_ms: Optional[float] = Field(default=None, ge=0.0)
+    ended_at: datetime | None = None
+    magnitude_pu: float | None = Field(default=None, ge=0.0)
+    duration_ms: float | None = Field(default=None, ge=0.0)
     affected_phases: list[PhaseTag] = Field(default_factory=list)
-    itic_region: Optional[ITICRegion] = None
-    standard_reference: Optional[str] = None
+    itic_region: ITICRegion | None = None
+    standard_reference: str | None = None
     evidence: list[Evidence] = Field(default_factory=list)
 
 
@@ -123,7 +122,7 @@ class ControlBoundary(CanonicalModel):
     rationale: str
 
     @model_validator(mode="after")
-    def _enforce_read_only_boundary(self) -> "ControlBoundary":
+    def _enforce_read_only_boundary(self) -> ControlBoundary:
         if self.requires_human_approval is not True:
             raise ValueError(
                 "ControlBoundary.requires_human_approval must be True; "

@@ -11,6 +11,7 @@ from __future__ import annotations
 import inspect
 
 import pytest
+from pydantic import ValidationError
 
 import packages.canonical_electrical_model as cem
 from packages.canonical_electrical_model import ControlBoundary
@@ -55,5 +56,5 @@ def test_no_model_has_control_write_fields():
 
 def test_models_forbid_extra_fields():
     # extra="forbid" prevents smuggling an unexpected (e.g. control) field in.
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         cem.Facility(id="f", name="n", secret_setpoint_kw=100.0)

@@ -10,7 +10,7 @@ constraint forbidding cycles.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import Field
 
@@ -33,12 +33,12 @@ class ElectricalNode(CanonicalModel):
     id: str
     name: str
     asset_type: AssetType
-    nominal_voltage_v: Optional[float] = Field(default=None, ge=0.0)
+    nominal_voltage_v: float | None = Field(default=None, ge=0.0)
     phases: Literal[1, 3]
     parent_facility_id: str
-    location: Optional[Location] = None
-    criticality: Optional[Criticality] = None
-    rated: Optional[RatedData] = None
+    location: Location | None = None
+    criticality: Criticality | None = None
+    rated: RatedData | None = None
     provenance: Provenance = Field(default_factory=Provenance)
 
 
@@ -55,9 +55,9 @@ class ElectricalEdge(CanonicalModel):
     to_node_id: str
     edge_kind: EdgeKind
     switch_state: SwitchState = SwitchState.UNKNOWN
-    switching_device_node_id: Optional[str] = None
-    impedance: Optional[EdgeImpedance] = None
-    ampacity_a: Optional[float] = Field(default=None, ge=0.0)
+    switching_device_node_id: str | None = None
+    impedance: EdgeImpedance | None = None
+    ampacity_a: float | None = Field(default=None, ge=0.0)
     provenance: Provenance = Field(default_factory=Provenance)
 
 
@@ -69,7 +69,7 @@ class SourceNode(CanonicalModel):
 
     node_id: str
     source_type: SourceType
-    rated_kva: Optional[float] = Field(default=None, ge=0.0)
+    rated_kva: float | None = Field(default=None, ge=0.0)
     priority: int = Field(ge=0)
 
 
@@ -85,7 +85,7 @@ class Facility(CanonicalModel):
     nominal_frequency_hz: float = Field(default=60.0, gt=0.0)
     nominal_voltage_levels: list[float] = Field(default_factory=list)
     timezone: str = "UTC"
-    sector_profile: Optional[SectorProfile] = None
+    sector_profile: SectorProfile | None = None
 
 
 class TopologySnapshot(CanonicalModel):

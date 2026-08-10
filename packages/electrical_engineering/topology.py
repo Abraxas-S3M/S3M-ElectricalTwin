@@ -34,7 +34,7 @@ is ``INDETERMINATE``. A node reachable in neither graph is ``DE_ENERGIZED``.
 from __future__ import annotations
 
 from collections import deque
-from typing import Iterable, Optional
+from collections.abc import Iterable
 
 from .enums import (
     ENERGIZED_STATES,
@@ -103,7 +103,7 @@ def _build_adjacency(
 def _bfs_from_source(
     source_id: str,
     adjacency: _Adjacency,
-) -> dict[str, tuple[Optional[str], Optional[Edge], bool]]:
+) -> dict[str, tuple[str | None, Edge | None, bool]]:
     """Breadth-first traversal from a single source.
 
     Returns a parent map: ``node_id -> (parent_id, edge_used, against_direction)``
@@ -111,7 +111,7 @@ def _bfs_from_source(
     visited set guarantees termination even when the graph contains cycles.
     """
 
-    parents: dict[str, tuple[Optional[str], Optional[Edge], bool]] = {
+    parents: dict[str, tuple[str | None, Edge | None, bool]] = {
         source_id: (None, None, False)
     }
     queue: deque[str] = deque([source_id])
@@ -127,7 +127,7 @@ def _bfs_from_source(
 
 def _reconstruct_path(
     node_id: str,
-    parents: dict[str, tuple[Optional[str], Optional[Edge], bool]],
+    parents: dict[str, tuple[str | None, Edge | None, bool]],
 ) -> tuple[list[str], bool, list[Edge]]:
     """Rebuild the path from the source to ``node_id``.
 
@@ -138,7 +138,7 @@ def _reconstruct_path(
     path: list[str] = []
     edges_on_path: list[Edge] = []
     is_backfed = False
-    cursor: Optional[str] = node_id
+    cursor: str | None = node_id
     while cursor is not None:
         path.append(cursor)
         parent, edge, against = parents[cursor]

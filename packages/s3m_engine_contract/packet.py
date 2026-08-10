@@ -14,8 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
@@ -42,8 +41,8 @@ _HASH_FIELD = "packet_hash"
 def _to_utc(value: datetime) -> datetime:
     """Normalise a datetime to UTC (treating naive values as UTC)."""
     if value.tzinfo is None:
-        return value.replace(tzinfo=timezone.utc)
-    return value.astimezone(timezone.utc)
+        return value.replace(tzinfo=UTC)
+    return value.astimezone(UTC)
 
 
 class ProvenanceSummary(BaseModel):
@@ -53,7 +52,7 @@ class ProvenanceSummary(BaseModel):
 
     is_entirely_synthetic: bool = True
     source_count: int = Field(default=0, ge=0)
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class DataSufficiency(BaseModel):
@@ -98,7 +97,7 @@ class ElectricalTwinPacket(BaseModel):
     window_start: datetime
     window_end: datetime
     readings: list[ElectricalReading] = Field(default_factory=list)
-    topology_snapshot: Optional[TopologySnapshot] = None
+    topology_snapshot: TopologySnapshot | None = None
     # Populated by later work packages; empty in WP0.
     health_scores: list[HealthScore] = Field(default_factory=list)
     anomalies: list[AnomalyResult] = Field(default_factory=list)
