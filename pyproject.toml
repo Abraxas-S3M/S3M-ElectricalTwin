@@ -19,47 +19,45 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest",
-    "pytest-cov",
     "ruff",
     "mypy",
 ]
 
-# The importable code lives under ``packages/`` and
-# ``services/electricaltwin-api/`` and is placed on the path at test time via
-# ``[tool.pytest.ini_options].pythonpath`` below; the distribution itself ships
-# no importable top-level packages, so discovery is intentionally empty.
 [tool.setuptools]
 py-modules = []
-packages = []
+
+[tool.setuptools.packages.find]
+include = ["packages*"]
 
 [tool.pytest.ini_options]
-# Put ``packages/`` and ``services/electricaltwin-api/`` on the import path so
-# ``import canonical_electrical_model`` and ``import app`` resolve without an
-# installed distribution.
+# Repo root (via the root conftest) supports ``import packages.<pkg>``; the
+# extra pythonpath entries support the bare ``import canonical_electrical_model``
+# and ``import app`` styles used by some tests.
 pythonpath = ["packages", "services/electricaltwin-api"]
-testpaths = ["packages/tests", "services/electricaltwin-api/tests"]
-
-[tool.coverage.run]
-branch = true
-source = ["packages", "services/electricaltwin-api"]
+testpaths = ["packages", "services"]
 
 [tool.ruff]
 target-version = "py311"
 line-length = 100
-extend-exclude = [".git", ".venv"]
+extend-exclude = [".git"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B"]
+# UP042 (prefer ``enum.StrEnum``) is intentionally disabled: the canonical
+# vocabularies are ``str, Enum`` classes with explicit string values equal to
+# their names, which is the round-trip contract the enum consumers rely on.
+ignore = ["UP042"]
 
 [tool.mypy]
 python_version = "3.11"
-# ``packages`` and ``services/electricaltwin-api`` are the package bases, so
-# each module has a single canonical name (``canonical_electrical_model`` and
-# ``app``). Tests use bare imports and deliberately-invalid inputs, so they are
-# not type-checked; source is.
-mypy_path = "packages:services/electricaltwin-api"
+# Only the repo root and the API service are on the type-check path, so each
+# module has a single canonical name (``packages.<pkg>`` and ``app``); adding
+# ``packages`` here as well would make mypy see modules under two names.
+mypy_path = ".:services/electricaltwin-api"
 namespace_packages = true
 explicit_package_bases = true
 ignore_missing_imports = true
 warn_unused_ignores = true
-exclude = '(^|/)tests/'
+# Tests exercise deliberately-invalid inputs and dynamic **kwargs builders and
+# use bare imports; they are not type-checked. Source is fully checked.
+exclude = ['(^|/)tests/']

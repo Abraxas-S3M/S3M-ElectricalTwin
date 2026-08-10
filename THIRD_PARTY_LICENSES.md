@@ -1,29 +1,32 @@
 # Third-Party Licenses
 
-S3M ElectricalTwin depends on the third-party packages listed below. Each is
-distributed under its own license by its respective authors; this file records
-those licenses. All packages are used unmodified via their published
-distributions.
+S3M ElectricalTwin depends on the third-party Python packages listed below.
+Each is distributed under its own license by its respective authors. This file
+records the license under which each dependency is used.
 
 ## Runtime dependencies
 
-| Package  | License      |
-| -------- | ------------ |
-| pydantic | MIT          |
-| fastapi  | MIT          |
-| uvicorn  | BSD-3-Clause |
-| httpx    | BSD-3-Clause |
+| Package    | License          |
+| ---------- | ---------------- |
+| pydantic   | MIT              |
+| fastapi    | MIT              |
+| uvicorn    | BSD-3-Clause     |
+| httpx      | BSD-3-Clause     |
 
-## Development dependencies
+## Development and CI dependencies
 
-| Package    | License |
-| ---------- | ------- |
-| pytest     | MIT     |
-| pytest-cov | MIT     |
-| ruff       | MIT     |
-| mypy       | MIT     |
+| Package      | License          |
+| ------------ | ---------------- |
+| pytest       | MIT              |
+| pytest-cov   | MIT              |
+| ruff         | MIT              |
+| mypy         | MIT              |
 
-License texts:
+## Build dependencies
 
-- **MIT** — https://opensource.org/license/mit
-- **BSD-3-Clause** — https://opensource.org/license/bsd-3-clause
+| Package    | License          |
+| ---------- | ---------------- |
+| setuptools | MIT              |
+
+Each dependency retains its own copyright and license terms. Refer to the
+individual project's distribution for the full text of its license.
