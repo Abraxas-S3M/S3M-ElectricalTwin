@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "s3m-electricaltwin"
+version = "0.0.0"
+description = "S3M ElectricalTwin — an advisory, read-only AI digital twin for facility electrical infrastructure."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+dependencies = [
+    "pydantic>=2,<3",
+    "fastapi",
+    "uvicorn",
+    "httpx",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+
+# The importable code lives under ``packages/`` and
+# ``services/electricaltwin-api/`` and is placed on the path at test time via
+# ``[tool.pytest.ini_options].pythonpath`` below; the distribution itself ships
+# no importable top-level packages, so discovery is intentionally empty.
+[tool.setuptools]
+py-modules = []
+packages = []
+
+[tool.pytest.ini_options]
+# Put ``packages/`` and ``services/electricaltwin-api/`` on the import path so
+# ``import canonical_electrical_model`` and ``import app`` resolve without an
+# installed distribution.
+pythonpath = ["packages", "services/electricaltwin-api"]
+testpaths = ["packages/tests", "services/electricaltwin-api/tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["packages", "services/electricaltwin-api"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = [".git", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+# ``packages`` and ``services/electricaltwin-api`` are the package bases, so
+# each module has a single canonical name (``canonical_electrical_model`` and
+# ``app``). Tests use bare imports and deliberately-invalid inputs, so they are
+# not type-checked; source is.
+mypy_path = "packages:services/electricaltwin-api"
+namespace_packages = true
+explicit_package_bases = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+exclude = '(^|/)tests/'
