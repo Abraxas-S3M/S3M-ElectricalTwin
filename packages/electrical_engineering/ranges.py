@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .enums import TelemetryChannel
+from packages.canonical_electrical_model import TelemetryChannel
 
 
 @dataclass(frozen=True)

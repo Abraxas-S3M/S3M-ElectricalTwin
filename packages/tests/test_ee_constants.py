@@ -25,8 +25,10 @@ def test_ieee519_voltage_distortion_buckets_are_consistent():
     labels_from_bounds = {label for _, _, label in constants.VOLTAGE_CLASS_BOUNDS_V}
     assert labels_from_limits == labels_from_bounds
     # Higher voltage classes tolerate less distortion (monotonically stricter).
-    ordered = [limit for _, _, label in constants.VOLTAGE_CLASS_BOUNDS_V
-               for limit in [constants.VOLTAGE_DISTORTION_THD_LIMIT_PERCENT[label]]]
+    ordered = [
+        constants.VOLTAGE_DISTORTION_THD_LIMIT_PERCENT[label]
+        for _, _, label in constants.VOLTAGE_CLASS_BOUNDS_V
+    ]
     assert ordered == sorted(ordered, reverse=True)
 
 

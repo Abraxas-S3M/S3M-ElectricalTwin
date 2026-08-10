@@ -218,6 +218,48 @@ class ITICRegion(str, Enum):
     UNKNOWN = "UNKNOWN"
 
 
+class EnergizationState(str, Enum):
+    """Resolved energization state of a node.
+
+    This is a *conservative computation* over the topology graph, not a reported
+    field on an asset. ``INDETERMINATE`` is a first-class value: when a node can
+    only be reached by traversing a switch whose state is not definitively known
+    (``UNKNOWN`` / ``INTERMEDIATE``), the state is reported as indeterminate and
+    is never guessed in either direction.
+    """
+
+    ENERGIZED_PRIMARY = "ENERGIZED_PRIMARY"
+    ENERGIZED_BACKUP = "ENERGIZED_BACKUP"
+    ENERGIZED_UPS = "ENERGIZED_UPS"
+    DE_ENERGIZED = "DE_ENERGIZED"
+    INDETERMINATE = "INDETERMINATE"
+
+
+class TelemetryChannel(str, Enum):
+    """Measured or derived telemetry channels for a monitored point.
+
+    A controlled vocabulary for the free-form ``ElectricalReading.channel``
+    field. It is also the key used for advisory data-quality plausibility
+    ranges in the electrical-engineering calculations package.
+    """
+
+    VOLTAGE_LINE_TO_NEUTRAL_V = "VOLTAGE_LINE_TO_NEUTRAL_V"
+    VOLTAGE_LINE_TO_LINE_V = "VOLTAGE_LINE_TO_LINE_V"
+    VOLTAGE_PER_UNIT = "VOLTAGE_PER_UNIT"
+    CURRENT_A = "CURRENT_A"
+    FREQUENCY_HZ = "FREQUENCY_HZ"
+    ACTIVE_POWER_W = "ACTIVE_POWER_W"
+    REACTIVE_POWER_VAR = "REACTIVE_POWER_VAR"
+    APPARENT_POWER_VA = "APPARENT_POWER_VA"
+    POWER_FACTOR = "POWER_FACTOR"
+    VOLTAGE_THD_PERCENT = "VOLTAGE_THD_PERCENT"
+    CURRENT_THD_PERCENT = "CURRENT_THD_PERCENT"
+    VOLTAGE_UNBALANCE_PERCENT = "VOLTAGE_UNBALANCE_PERCENT"
+    TOP_OIL_TEMPERATURE_C = "TOP_OIL_TEMPERATURE_C"
+    HOT_SPOT_TEMPERATURE_C = "HOT_SPOT_TEMPERATURE_C"
+    AMBIENT_TEMPERATURE_C = "AMBIENT_TEMPERATURE_C"
+
+
 class ApprovalStatus(str, Enum):
     """Review/approval lifecycle state of an operator-facing artefact.
 
@@ -249,5 +291,7 @@ __all__ = [
     "AnomalyDomain",
     "PowerQualityEventType",
     "ITICRegion",
+    "EnergizationState",
+    "TelemetryChannel",
     "ApprovalStatus",
 ]

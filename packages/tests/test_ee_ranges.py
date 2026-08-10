@@ -1,8 +1,13 @@
-"""Tests for the advisory telemetry plausibility ranges."""
+"""Tests for the advisory telemetry plausibility ranges.
+
+``TelemetryChannel`` is imported from the canonical model; the ranges and the
+screening helper come from the calculations package.
+"""
 
 from __future__ import annotations
 
-from packages.electrical_engineering import TelemetryChannel, is_out_of_range
+from packages.canonical_electrical_model import TelemetryChannel
+from packages.electrical_engineering import is_out_of_range
 from packages.electrical_engineering.ranges import PLAUSIBILITY_RANGES
 
 
