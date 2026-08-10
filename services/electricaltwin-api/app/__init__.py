@@ -1,9 +1,6 @@
-"""Advisory, read-only API service for S3M ElectricalTwin.
+"""S3M ElectricalTwin API service (advisory, read-only).
 
-This service exposes read-only, advisory views over the canonical electrical
-model. It never writes to, commands or actuates any control system or field
-device; see :mod:`canonical_electrical_model.safety` for the platform
-invariant. Request handlers are added in later work-package chunks.
+Placeholder package for the read-only advisory API. This service exposes
+observations and analytics only; it exposes no endpoint that writes to,
+commands, or actuates any control system or field device.
 """
-
-from __future__ import annotations

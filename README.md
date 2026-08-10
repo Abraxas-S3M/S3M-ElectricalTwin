@@ -1,75 +1,154 @@
+# S3M-ElectricalTwin
+
+Canonical data models for an electrical digital twin.
+
+## `packages/canonical_electrical_model`
+
+Pydantic v2 models describing the **observed** and **rated** reality of an
+electrical network. The package is **observe-only by design**: no model carries
+a setpoint, command, write target, or control action, and `ControlBoundary`
+encodes that invariant explicitly (it is a frozen assertion that control writes
+are disabled and human approval is required).
+
+Highlights:
+
+- **Topology is a directed graph with live switching state**, not a tree. Edges
+  are directed and carry an independent `switch_state` (`OPEN` / `CLOSED` /
+  `INTERMEDIATE` / `UNKNOWN`), so tie breakers and backfeed paths can form
+  genuine cycles.
+- **Everything is provenance-labelled.** `RatedData` fields are individually
+  wrapped in `Provenanced[T]`; nodes, edges, and readings carry a `Provenance`.
+- **Facility frequency defaults to 60 Hz but is configurable** (adjacent 50 Hz
+  markets are supported).
+- **Analytic contracts** (`Evidence`, `HealthScore`, `AnomalyResult`,
+  `PowerQualityEvent`, `RankedCause`, ...) are defined now and populated by
+  later work packages.
+
+## Development
+
+```bash
+pip install -e ".[test]"   # pydantic>=2, pytest
+pytest -q
+```
 # S3M ElectricalTwin
 
 S3M ElectricalTwin is an **advisory, read-only AI digital twin** for facility
-electrical infrastructure. It builds a canonical model of the electrical
-system, reasons over synthetic telemetry and asset data, and surfaces
-observations, analyses and preliminary insights to human engineers.
+electrical infrastructure. It builds a canonical model of electrical assets,
+ingests synthetic operational and nameplate data, and produces engineering
+analytics and advisory insight to help engineers understand the state and
+behaviour of an electrical system.
 
-## Advisory, read-only posture
+## Read-only posture (please read first)
 
-**This product only observes and analyses. It never controls.**
+> **S3M ElectricalTwin is advisory and read-only. It never writes to,
+> commands, or actuates any control system, PLC, breaker, drive, relay, or
+> field device.**
 
-There is no control-write path anywhere in this repository, and there never
-will be in this product. No code path may write to, command or actuate any
-control system, PLC, breaker, drive, relay or field device. This is a hard
-platform invariant encoded in
-[`packages/canonical_electrical_model/safety.py`](packages/canonical_electrical_model/safety.py)
-(where the control-write flag is permanently disabled) and enforced in CI by
-[`scripts/check_safety_invariant.sh`](scripts/check_safety_invariant.sh).
+This is a **hard platform invariant**, not a configuration choice. It is
+encoded in code as `CONTROL_WRITE_ENABLED = False`
+(see `packages/canonical_electrical_model/safety.py`) and enforced in
+continuous integration by a dedicated `safety-invariant` job that scans the
+repository for any control-write or actuation code path.
 
-A control tier, were one ever to exist, would be a **separately authorised and
-safety-certified product** with its own governance, review and certification
-lifecycle — never this one.
+A control tier, if one were ever built, would be a **separately authorised and
+safety-certified product** with its own governance and certification lifecycle.
+It would never be this product.
+
+## Data and analytics disclaimer
+
+**All data bundled in this repository is synthetic.** No real facility,
+operational, or customer data is present. **All analytics produced by this
+project are preliminary** and are intended for advisory purposes only; they are
+not a substitute for professional engineering judgement or certified analysis.
 
 ## Canonical layout
 
+The repository follows a fixed, canonical layout. This is the only permitted
+structure:
+
 ```
-packages/canonical_electrical_model/   # canonical, vendor-neutral electrical model + safety invariant
-packages/electrical_engineering/       # electrical engineering constants, ranges and topology
-packages/s3m_engine_contract/          # S3M reasoning-engine contract
-packages/tests/                        # tests for the packages above
+packages/canonical_electrical_model/   # canonical electrical asset model + safety invariant
+packages/electrical_engineering/       # electrical engineering analytics (advisory)
+packages/s3m_engine_contract/          # read-only engine contract types
+packages/tests/                        # package-level tests
 services/electricaltwin-api/app/       # advisory read-only API service
-services/electricaltwin-api/tests/     # tests for the API service
+services/electricaltwin-api/tests/     # API service tests
 docs/adr/                              # architecture decision records
-docs/architecture/                     # architecture notes
+docs/architecture/                     # architecture documentation
 docs/asset-model/                      # asset-model documentation
 docs/security/                         # security documentation
-scripts/                               # tooling, incl. the safety-invariant check
-.github/workflows/                     # continuous integration
+scripts/                              # developer and CI scripts
+.github/workflows/                     # CI workflows
 ```
 
-Tests live in `packages/tests/` and `services/electricaltwin-api/tests/` only;
-there is intentionally no top-level `tests/` directory.
+## Requirements
 
-## Running the tests
+- Python 3.11
 
-Requires Python 3.11. From the repository root:
+## Setup
 
 ```bash
 python -m pip install --upgrade pip
 pip install -e ".[dev]"
-pytest
 ```
 
-Other checks mirrored in CI:
+`packages/` and `services/electricaltwin-api/` are placed on the import path
+via `pyproject.toml`, so the packages and the API service can be imported
+directly in tests and tooling.
+
+## Running the checks
 
 ```bash
-ruff check .                                   # lint
-mypy packages services                         # type-check
-python -m compileall -q packages services scripts   # compile
-bash scripts/check_safety_invariant.sh         # safety invariant
+# Lint
+ruff check .
+
+# Type-check
+mypy packages services
+
+# Tests (with coverage)
+pytest -q
+
+# Hard read-only safety invariant
+bash scripts/check_safety_invariant.sh
+
+# Byte-compile everything
+python -m compileall -q packages services scripts
 ```
 
-## Data and analytics
+These are the same five blocking checks run in CI: `lint`, `typecheck`,
+`test`, `safety-invariant`, and `compile`.
 
-All bundled data is **synthetic**. Nothing in this repository represents a real
-facility, asset, measurement or party, and no secrets are committed. All
-analytics produced by the twin are **preliminary** and advisory, intended to
-support — never replace — the judgement of a qualified human engineer.
+## Engine contract, grounding gate and API
 
-## Continuous integration and merging
+`packages/s3m_engine_contract/` defines the read-only contract the S3M
+reasoning brain speaks through: deterministic routing, the packet an engine
+consumes and the card it emits, plus the **grounding gate**
+(`grounding.py` — a deterministic, no-LLM verifier), the **determinism guard**
+(`determinism.py`), the **refusal path** (`refusal.py`) and the **audit chain**
+(`audit.py`). `services/electricaltwin-api/` exposes an advisory, read-only
+FastAPI service (`/health`, `/safety`, `/meta/provenance`, `/engine/contract`,
+`/engine/grounding-rules`). No language model is invoked anywhere in Work
+Package 0.
 
-CI runs five blocking checks on every pull request: **lint**, **typecheck**,
-**test**, **safety-invariant** and **compile**. Once all five checks pass, the
-pull request is **squash-merged automatically** by CI (squash only, so a merge
-commit is never produced).
+## Known limitations
+
+- **In-memory audit chain (WP0 only).** The tamper-evident audit chain in
+  `packages/s3m_engine_contract/audit.py` is an **in-memory** implementation. It
+  exists to pin the audit contract and to prove the hash-chain semantics under
+  test: it keeps the entire chain in process memory, is not concurrency-safe,
+  and does not survive a restart. It **must be replaced by a durable,
+  append-only, PostgreSQL-backed audit service before any pilot deployment.** Do
+  not rely on it for any real auditability guarantee. See
+  [ADR-0008](docs/adr/ADR-0008-determinism-and-reproducibility.md).
+- **No protection-coordination engine.** There is no credible open-source
+  protection-coordination engine; protection settings are modelled as data and
+  time-current-curve coordination, selectivity and arc-flash remain
+  licensed-engineer deliverables. See
+  [ADR-0003](docs/adr/ADR-0003-physics-engine-selection.md).
+- **No LLM in WP0.** Work Package 0 pins the engine contract, grounding gate,
+  determinism guard, refusal path and audit chain. No language model is invoked.
+
+## License
+
+See [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md) for the licenses of
+third-party dependencies.
