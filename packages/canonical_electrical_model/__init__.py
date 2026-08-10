@@ -2,15 +2,13 @@
 
 Pydantic v2 models describing the *observed* and *rated* reality of an
 electrical network: topology (a directed graph with live switching state),
-telemetry, and the analytic contracts populated by later work packages.
+telemetry, and the analytic contracts populated by later work packages, plus
+the controlled vocabularies (enumerations) shared across the S3M ElectricalTwin
+packages.
 
 By design the package is read-only: no model carries a setpoint, command,
 write target, or control action, and :class:`ControlBoundary` encodes that
-invariant explicitly.
-"""Canonical electrical model: shared enumerations and value vocabularies.
-
-This package provides the controlled vocabularies (enumerations) that the S3M
-ElectricalTwin packages agree on. All data described here is synthetic.
+invariant explicitly. All data described here is synthetic.
 """
 
 from __future__ import annotations
@@ -27,6 +25,7 @@ from .analytics import (
 from .common import CanonicalModel, Location
 from .enums import (
     AnomalyDomain,
+    ApprovalStatus,
     AssetType,
     ContributionDirection,
     Criticality,
@@ -44,6 +43,7 @@ from .enums import (
 )
 from .provenance import Provenance, Provenanced, ProvenanceSource
 from .ratings import EdgeImpedance, RatedData
+from .safety import CONTROL_WRITE_ENABLED, assert_read_only
 from .telemetry import ElectricalReading
 from .topology import (
     ElectricalEdge,
@@ -63,6 +63,7 @@ __all__ = [
     "ProvenanceSource",
     # enums
     "AnomalyDomain",
+    "ApprovalStatus",
     "AssetType",
     "ContributionDirection",
     "Criticality",
@@ -96,45 +97,7 @@ __all__ = [
     "HealthScore",
     "PowerQualityEvent",
     "RankedCause",
+    # safety
+    "CONTROL_WRITE_ENABLED",
+    "assert_read_only",
 ]
-from .enums import (
-    ApprovalStatus,
-    AssetType,
-    Criticality,
-    DataProvenance,
-    DataQuality,
-    EnergizationState,
-    HealthBand,
-    PhaseTag,
-    PowerQualityEventType,
-    SourceType,
-    SwitchState,
-    TelemetryChannel,
-    ValidationState,
-    is_customer_sourced,
-)
-
-__all__ = [
-    "ApprovalStatus",
-    "AssetType",
-    "Criticality",
-    "DataProvenance",
-    "DataQuality",
-    "EnergizationState",
-    "HealthBand",
-    "PhaseTag",
-    "PowerQualityEventType",
-    "SourceType",
-    "SwitchState",
-    "TelemetryChannel",
-    "ValidationState",
-    "is_customer_sourced",
-]
-"""Canonical electrical model for S3M ElectricalTwin (advisory, read-only)."""
-
-from canonical_electrical_model.safety import (
-    CONTROL_WRITE_ENABLED,
-    assert_read_only,
-)
-
-__all__ = ["CONTROL_WRITE_ENABLED", "assert_read_only"]
