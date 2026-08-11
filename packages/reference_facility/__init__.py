@@ -19,10 +19,25 @@ from __future__ import annotations
 
 from .loader import load_reference_facility
 from .models import MeteringPlan, ReferenceFacility, SubMeter
+from .topology import (
+    VARIANTS,
+    closed_graph_has_cycle,
+    count_lv_islands,
+    lv_island_of,
+    lv_islands,
+    topology_snapshot,
+)
 
 __all__ = [
     "load_reference_facility",
     "ReferenceFacility",
     "MeteringPlan",
     "SubMeter",
+    # WP1.2 topology snapshots and switching variants
+    "topology_snapshot",
+    "VARIANTS",
+    "lv_islands",
+    "count_lv_islands",
+    "lv_island_of",
+    "closed_graph_has_cycle",
 ]
