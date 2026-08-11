@@ -25,11 +25,11 @@ from packages.canonical_electrical_model import (
 )
 from packages.electrical_engineering import ENERGIZED_STATES
 from packages.electrical_engineering.topology import solve_energization
-from packages.reference_facility import (
+from packages.reference_facility import load_reference_facility
+from packages.reference_facility.switching import (
     VARIANTS,
     closed_graph_has_cycle,
     count_lv_islands,
-    load_reference_facility,
     lv_island_of,
     topology_snapshot,
 )
