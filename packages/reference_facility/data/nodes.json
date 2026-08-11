@@ -1,0 +1,545 @@
+{
+  "_synthetic_notice": "All nodes below are SYNTHETIC test data for FAC-001 (DataProvenance.SYNTHETIC). No value is derived from any real facility, customer, or vendor. The 'subtype' key is descriptive documentation only; it is not part of the canonical ElectricalNode and is dropped by the loader. Ratings carry no manufacturer/model/serial on purpose, so no vendor is ever named.",
+  "nodes": [
+    {
+      "id": "UTIL-001",
+      "name": "UTIL-001 utility intake (13.8 kV, 3-phase service)",
+      "asset_type": "UTILITY_SERVICE",
+      "subtype": "UTILITY_INTAKE",
+      "nominal_voltage_v": 13800.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 13800.0, "kva": 5000.0, "frequency_hz": 60.0}
+    },
+    {
+      "id": "MTR-MAIN-001",
+      "name": "MTR-MAIN-001 revenue meter (Class 0.2S)",
+      "asset_type": "METER",
+      "subtype": "REVENUE_METER",
+      "nominal_voltage_v": 13800.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 13800.0, "current_a": 5.0, "frequency_hz": 60.0}
+    },
+    {
+      "id": "SWGR-MV-001",
+      "name": "SWGR-MV-001 main MV switchgear (13.8 kV, 25 kA)",
+      "asset_type": "SWITCHGEAR",
+      "subtype": "MAIN_SWITCHGEAR",
+      "nominal_voltage_v": 13800.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 13800.0, "current_a": 1250.0, "interrupting_kaic": 25.0}
+    },
+    {
+      "id": "CB-MV-INC-001",
+      "name": "CB-MV-INC-001 MV incomer breaker (13.8 kV, 25 kAIC)",
+      "asset_type": "BREAKER",
+      "subtype": "CIRCUIT_BREAKER",
+      "nominal_voltage_v": 13800.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 13800.0, "current_a": 1250.0, "interrupting_kaic": 25.0, "operations_rated": 10000}
+    },
+    {
+      "id": "CB-MV-TX1",
+      "name": "CB-MV-TX1 MV transformer feeder breaker to TX-001",
+      "asset_type": "BREAKER",
+      "subtype": "CIRCUIT_BREAKER",
+      "nominal_voltage_v": 13800.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 13800.0, "current_a": 630.0, "interrupting_kaic": 25.0}
+    },
+    {
+      "id": "CB-MV-TX2",
+      "name": "CB-MV-TX2 MV transformer feeder breaker to TX-002",
+      "asset_type": "BREAKER",
+      "subtype": "CIRCUIT_BREAKER",
+      "nominal_voltage_v": 13800.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 13800.0, "current_a": 630.0, "interrupting_kaic": 25.0}
+    },
+    {
+      "id": "TX-001",
+      "name": "TX-001 distribution transformer (2500 kVA, 13.8 kV/400 V, Dyn11, ONAN)",
+      "asset_type": "TRANSFORMER",
+      "subtype": "TRANSFORMER",
+      "nominal_voltage_v": 13800.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {
+        "kva": 2500.0,
+        "voltage_v": 13800.0,
+        "frequency_hz": 60.0,
+        "impedance_percent": 6.0,
+        "vector_group": "Dyn11",
+        "insulation_class": "ONAN",
+        "temperature_rise_k": 65.0,
+        "no_load_loss_kw": 3.0,
+        "load_loss_kw": 24.0
+      }
+    },
+    {
+      "id": "TX-002",
+      "name": "TX-002 distribution transformer (2500 kVA, 13.8 kV/400 V, Dyn11, ONAN)",
+      "asset_type": "TRANSFORMER",
+      "subtype": "TRANSFORMER",
+      "nominal_voltage_v": 13800.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {
+        "kva": 2500.0,
+        "voltage_v": 13800.0,
+        "frequency_hz": 60.0,
+        "impedance_percent": 6.0,
+        "vector_group": "Dyn11",
+        "insulation_class": "ONAN",
+        "temperature_rise_k": 65.0,
+        "no_load_loss_kw": 3.1,
+        "load_loss_kw": 24.5
+      }
+    },
+    {
+      "id": "CB-LV-INC-001",
+      "name": "CB-LV-INC-001 LV incomer breaker (4000 A) from TX-001",
+      "asset_type": "BREAKER",
+      "subtype": "CIRCUIT_BREAKER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 400.0, "current_a": 4000.0, "interrupting_kaic": 65.0}
+    },
+    {
+      "id": "CB-LV-INC-002",
+      "name": "CB-LV-INC-002 LV incomer breaker (4000 A) from TX-002",
+      "asset_type": "BREAKER",
+      "subtype": "CIRCUIT_BREAKER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 400.0, "current_a": 4000.0, "interrupting_kaic": 65.0}
+    },
+    {
+      "id": "SWGR-LV-001",
+      "name": "SWGR-LV-001 LV main board A (400 V)",
+      "asset_type": "SWITCHGEAR",
+      "subtype": "MAIN_SWITCHGEAR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 400.0, "current_a": 4000.0, "interrupting_kaic": 65.0}
+    },
+    {
+      "id": "SWGR-LV-002",
+      "name": "SWGR-LV-002 LV main board B (400 V)",
+      "asset_type": "SWITCHGEAR",
+      "subtype": "MAIN_SWITCHGEAR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 400.0, "current_a": 4000.0, "interrupting_kaic": 65.0}
+    },
+    {
+      "id": "CB-TIE-001",
+      "name": "CB-TIE-001 LV bus-tie breaker (NORMALLY OPEN) between SWGR-LV-001 and SWGR-LV-002",
+      "asset_type": "TIE_BREAKER",
+      "subtype": "CIRCUIT_BREAKER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "current_a": 4000.0, "interrupting_kaic": 65.0}
+    },
+    {
+      "id": "MTR-LV-001",
+      "name": "MTR-LV-001 LV board A meter (Class 0.5S)",
+      "asset_type": "METER",
+      "subtype": "SUB_METER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "current_a": 4000.0}
+    },
+    {
+      "id": "MTR-LV-002",
+      "name": "MTR-LV-002 LV board B meter (Class 0.5S)",
+      "asset_type": "METER",
+      "subtype": "SUB_METER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "current_a": 4000.0}
+    },
+    {
+      "id": "MCC-001",
+      "name": "MCC-001 motor control centre (production line A)",
+      "asset_type": "SWITCHBOARD",
+      "subtype": "MCC",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "current_a": 800.0}
+    },
+    {
+      "id": "MCC-002",
+      "name": "MCC-002 motor control centre (production line B)",
+      "asset_type": "SWITCHBOARD",
+      "subtype": "MCC",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "current_a": 800.0}
+    },
+    {
+      "id": "MCC-003",
+      "name": "MCC-003 motor control centre (utilities and HVAC)",
+      "asset_type": "SWITCHBOARD",
+      "subtype": "MCC",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "current_a": 1000.0}
+    },
+    {
+      "id": "M-001",
+      "name": "M-001 line-A motor 45 kW (direct-on-line)",
+      "asset_type": "MOTOR",
+      "subtype": "MOTOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 45.0, "power_factor": 0.86, "current_a": 80.0}
+    },
+    {
+      "id": "M-002",
+      "name": "M-002 line-A motor 90 kW (drive-fed by VFD-001)",
+      "asset_type": "MOTOR",
+      "subtype": "MOTOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 90.0, "power_factor": 0.87, "current_a": 160.0}
+    },
+    {
+      "id": "M-003",
+      "name": "M-003 line-A motor 30 kW (direct-on-line)",
+      "asset_type": "MOTOR",
+      "subtype": "MOTOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 30.0, "power_factor": 0.85, "current_a": 55.0}
+    },
+    {
+      "id": "M-004",
+      "name": "M-004 line-B motor 160 kW (drive-fed by VFD-002)",
+      "asset_type": "MOTOR",
+      "subtype": "MOTOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 160.0, "power_factor": 0.88, "current_a": 280.0}
+    },
+    {
+      "id": "M-005",
+      "name": "M-005 line-B motor 15 kW (direct-on-line)",
+      "asset_type": "MOTOR",
+      "subtype": "MOTOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "kw": 15.0, "power_factor": 0.82, "current_a": 29.0}
+    },
+    {
+      "id": "M-006",
+      "name": "M-006 line-B motor 75 kW (drive-fed by VFD-003)",
+      "asset_type": "MOTOR",
+      "subtype": "MOTOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 75.0, "power_factor": 0.87, "current_a": 135.0}
+    },
+    {
+      "id": "M-007",
+      "name": "M-007 utilities motor 110 kW (drive-fed by VFD-004)",
+      "asset_type": "MOTOR",
+      "subtype": "MOTOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 110.0, "power_factor": 0.87, "current_a": 195.0}
+    },
+    {
+      "id": "M-008",
+      "name": "M-008 utilities motor 22 kW (direct-on-line)",
+      "asset_type": "MOTOR",
+      "subtype": "MOTOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "kw": 22.0, "power_factor": 0.84, "current_a": 42.0}
+    },
+    {
+      "id": "VFD-001",
+      "name": "VFD-001 variable-frequency drive feeding M-002",
+      "asset_type": "OTHER",
+      "subtype": "VFD",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 90.0, "current_a": 160.0}
+    },
+    {
+      "id": "VFD-002",
+      "name": "VFD-002 variable-frequency drive feeding M-004",
+      "asset_type": "OTHER",
+      "subtype": "VFD",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 160.0, "current_a": 280.0}
+    },
+    {
+      "id": "VFD-003",
+      "name": "VFD-003 variable-frequency drive feeding M-006",
+      "asset_type": "OTHER",
+      "subtype": "VFD",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 75.0, "current_a": 135.0}
+    },
+    {
+      "id": "VFD-004",
+      "name": "VFD-004 variable-frequency drive feeding M-007",
+      "asset_type": "OTHER",
+      "subtype": "VFD",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 110.0, "current_a": 195.0}
+    },
+    {
+      "id": "CH-001",
+      "name": "CH-001 chiller 400 kW (ambient-correlated)",
+      "asset_type": "LOAD",
+      "subtype": "CHILLER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 400.0, "power_factor": 0.88, "current_a": 690.0}
+    },
+    {
+      "id": "CH-002",
+      "name": "CH-002 chiller 400 kW (ambient-correlated)",
+      "asset_type": "LOAD",
+      "subtype": "CHILLER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 400.0, "power_factor": 0.88, "current_a": 690.0}
+    },
+    {
+      "id": "AC-001",
+      "name": "AC-001 air compressor motor 90 kW (cyclic duty)",
+      "asset_type": "MOTOR",
+      "subtype": "AIR_COMPRESSOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 90.0, "power_factor": 0.86, "current_a": 160.0}
+    },
+    {
+      "id": "P-001",
+      "name": "P-001 process pump (motor-driven)",
+      "asset_type": "MOTOR",
+      "subtype": "PUMP",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "kw": 37.0, "power_factor": 0.85, "current_a": 68.0}
+    },
+    {
+      "id": "P-002",
+      "name": "P-002 process pump (motor-driven)",
+      "asset_type": "MOTOR",
+      "subtype": "PUMP",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "kw": 30.0, "power_factor": 0.85, "current_a": 55.0}
+    },
+    {
+      "id": "P-003",
+      "name": "P-003 cooling-water pump (motor-driven)",
+      "asset_type": "MOTOR",
+      "subtype": "PUMP",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 55.0, "power_factor": 0.86, "current_a": 98.0}
+    },
+    {
+      "id": "PL-001",
+      "name": "PL-001 production line A aggregate load (shift-driven)",
+      "asset_type": "LOAD",
+      "subtype": "PRODUCTION_LINE",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 250.0, "power_factor": 0.90, "current_a": 400.0}
+    },
+    {
+      "id": "PL-002",
+      "name": "PL-002 production line B aggregate load (shift-driven)",
+      "asset_type": "LOAD",
+      "subtype": "PRODUCTION_LINE",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "kw": 220.0, "power_factor": 0.90, "current_a": 355.0}
+    },
+    {
+      "id": "DB-001",
+      "name": "DB-001 lighting panel (230 V)",
+      "asset_type": "PANELBOARD",
+      "subtype": "LIGHTING_PANEL",
+      "nominal_voltage_v": 230.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 230.0, "kw": 60.0, "current_a": 150.0}
+    },
+    {
+      "id": "DB-002",
+      "name": "DB-002 distribution board, offices (occupancy-driven)",
+      "asset_type": "PANELBOARD",
+      "subtype": "DISTRIBUTION_BOARD",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "kw": 80.0, "current_a": 130.0}
+    },
+    {
+      "id": "DB-003",
+      "name": "DB-003 distribution board, critical loads (UPS-backed)",
+      "asset_type": "PANELBOARD",
+      "subtype": "DISTRIBUTION_BOARD",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "CRITICAL",
+      "rated": {"voltage_v": 400.0, "kw": 120.0, "current_a": 190.0}
+    },
+    {
+      "id": "CAP-001",
+      "name": "CAP-001 automatic capacitor bank, 400 kvar (4 x 100 kvar steps)",
+      "asset_type": "CAPACITOR_BANK",
+      "subtype": "CAPACITOR_BANK",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "kva": 400.0}
+    },
+    {
+      "id": "HF-001",
+      "name": "HF-001 detuned harmonic filter on SWGR-LV-002",
+      "asset_type": "OTHER",
+      "subtype": "HARMONIC_FILTER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "kva": 150.0}
+    },
+    {
+      "id": "GEN-001",
+      "name": "GEN-001 standby diesel generator, 1500 kVA (8-hour tank)",
+      "asset_type": "GENERATOR",
+      "subtype": "GENERATOR",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 400.0, "kva": 1500.0, "kw": 1200.0, "power_factor": 0.80, "frequency_hz": 60.0}
+    },
+    {
+      "id": "ATS-001",
+      "name": "ATS-001 automatic transfer switch (utility/generator) to SWGR-LV-002",
+      "asset_type": "OTHER",
+      "subtype": "ATS",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 400.0, "current_a": 2500.0}
+    },
+    {
+      "id": "UPS-001",
+      "name": "UPS-001 double-conversion UPS, 200 kVA (feeds DB-003)",
+      "asset_type": "UPS",
+      "subtype": "UPS",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "CRITICAL",
+      "rated": {"voltage_v": 400.0, "kva": 200.0, "kw": 180.0}
+    },
+    {
+      "id": "BATT-001",
+      "name": "BATT-001 UPS battery string, 40 x 12 V VRLA 100 Ah (~15 min autonomy)",
+      "asset_type": "OTHER",
+      "subtype": "BATTERY_STRING",
+      "nominal_voltage_v": 480.0,
+      "phases": 1,
+      "criticality": "HIGH",
+      "rated": {"voltage_v": 480.0}
+    },
+    {
+      "id": "PV-001",
+      "name": "PV-001 rooftop solar array, 500 kWp",
+      "asset_type": "OTHER",
+      "subtype": "SOLAR_ARRAY",
+      "nominal_voltage_v": 800.0,
+      "phases": 1,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 800.0, "kw": 500.0}
+    },
+    {
+      "id": "INV-001",
+      "name": "INV-001 PV inverter, 450 kW into SWGR-LV-001",
+      "asset_type": "OTHER",
+      "subtype": "INVERTER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "kw": 450.0, "kva": 450.0}
+    },
+    {
+      "id": "MTR-MCC-001",
+      "name": "MTR-MCC-001 sub-meter on MCC-001 feeder",
+      "asset_type": "METER",
+      "subtype": "SUB_METER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "current_a": 800.0}
+    },
+    {
+      "id": "MTR-MCC-002",
+      "name": "MTR-MCC-002 sub-meter on MCC-002 feeder",
+      "asset_type": "METER",
+      "subtype": "SUB_METER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "LOW",
+      "rated": {"voltage_v": 400.0, "current_a": 800.0}
+    },
+    {
+      "id": "MTR-DB-003",
+      "name": "MTR-DB-003 sub-meter on DB-003 critical-loads feeder",
+      "asset_type": "METER",
+      "subtype": "SUB_METER",
+      "nominal_voltage_v": 400.0,
+      "phases": 3,
+      "criticality": "MEDIUM",
+      "rated": {"voltage_v": 400.0, "current_a": 250.0}
+    }
+  ]
+}
