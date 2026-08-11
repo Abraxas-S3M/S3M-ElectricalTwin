@@ -12,10 +12,9 @@ from __future__ import annotations
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import datetime
-from typing import Annotated, Any
+from typing import Any
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI
 
 from app.config import AppConfig, assert_startup_invariants, load_config
 from app.logging_config import configure_logging
@@ -23,19 +22,6 @@ from packages.canonical_electrical_model import (
     ControlBoundary,
     DataProvenance,
     ValidationState,
-)
-from packages.reference_facility import (
-    SYNTHETIC_NOTICE,
-    TOPOLOGY_VARIANTS,
-    UnknownScenarioError,
-    UnknownVariantError,
-    all_scenarios,
-    base_nodes,
-    base_sources,
-    energization_rows,
-    facility,
-    replay_manifest,
-    topology,
 )
 from packages.s3m_engine_contract.grounding import CHECK_DEFINITIONS, GroundingCheck
 from packages.s3m_engine_contract.routing import (
@@ -224,95 +210,3 @@ def grounding_rules() -> dict[str, Any]:
             for check in GroundingCheck
         ]
     }
-
-
-# --- Reference facility (read-only; computed on demand, no persistence) -----
-#
-# These endpoints expose the synthetic reference facility and its deterministic
-# replay engine. There is no telemetry-streaming endpoint, no storage layer and
-# no persistence: topology, energization and replay manifests are all computed
-# when requested. Replay telemetry itself is never streamed here -- only its
-# reproducibility manifest (parameters plus result hash) is served.
-
-
-@app.get("/reference/facility")
-def reference_facility() -> dict[str, Any]:
-    """Facility metadata and the full (synthetic) asset inventory."""
-
-    return {
-        "facility": facility().model_dump(mode="json"),
-        "assets": [node.model_dump(mode="json") for node in base_nodes()],
-        "sources": [source.model_dump(mode="json") for source in base_sources()],
-        "synthetic_notice": SYNTHETIC_NOTICE,
-    }
-
-
-@app.get("/reference/topology")
-def reference_topology(
-    variant: Annotated[str, Query()] = "normal",
-) -> dict[str, Any]:
-    """Nodes, edges and live switch states for a topology variant."""
-
-    try:
-        snapshot = topology(variant)
-    except UnknownVariantError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
-    return {
-        "variant": variant,
-        "valid_variants": list(TOPOLOGY_VARIANTS),
-        "snapshot": snapshot.model_dump(mode="json"),
-        "synthetic_notice": SYNTHETIC_NOTICE,
-    }
-
-
-@app.get("/reference/energization")
-def reference_energization(
-    variant: Annotated[str, Query()] = "normal",
-) -> dict[str, Any]:
-    """Engineering-solver energization result for a topology variant."""
-
-    try:
-        rows = energization_rows(variant)
-    except UnknownVariantError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
-    return {
-        "variant": variant,
-        "valid_variants": list(TOPOLOGY_VARIANTS),
-        "results": rows,
-        "synthetic_notice": SYNTHETIC_NOTICE,
-    }
-
-
-@app.get("/reference/scenarios")
-def reference_scenarios() -> dict[str, Any]:
-    """Every scenario with its narrative and ground truth."""
-
-    return {
-        "scenarios": [scenario.model_dump(mode="json") for scenario in all_scenarios()],
-        "synthetic_notice": SYNTHETIC_NOTICE,
-    }
-
-
-@app.get("/reference/replay/manifest")
-def reference_replay_manifest(
-    scenario_id: Annotated[str, Query()],
-    seed: Annotated[int, Query()],
-    start: Annotated[datetime, Query()],
-    end: Annotated[datetime, Query()],
-    interval_s: Annotated[int, Query()],
-) -> dict[str, Any]:
-    """Reproducibility manifest for a replay: its parameters plus the hash.
-
-    The telemetry itself is not returned or persisted; the manifest is enough to
-    prove a replay reproducible by regenerating it and matching the hash.
-    """
-
-    try:
-        manifest = replay_manifest(scenario_id, seed, start, end, interval_s)
-    except UnknownScenarioError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    payload = manifest.to_dict()
-    payload["synthetic_notice"] = SYNTHETIC_NOTICE
-    return payload
