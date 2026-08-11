@@ -1,7 +1,10 @@
 """S3M ElectricalTwin -- electrical engineering package.
 
-Pure-Python domain model, standards-derived numeric constants, advisory
-telemetry plausibility ranges and the topology energization solver.
+Standards-derived numeric constants, advisory telemetry plausibility ranges and
+the topology energization solver. The domain vocabulary (enumerations) and the
+network model (nodes, edges, sources) are owned by
+:mod:`packages.canonical_electrical_model`; this package consumes them and adds
+only the analytic *outputs* (see :mod:`results`).
 
 Nothing in this package performs I/O, database or network access, and no value
 here should be relied upon without independent verification by a licensed
@@ -10,23 +13,17 @@ professional engineer (see :mod:`electrical_engineering.constants`).
 
 from __future__ import annotations
 
-from . import constants, ranges, topology
-from .enums import (
-    ENERGIZED_STATES,
+from packages.canonical_electrical_model import (
     Criticality,
     EnergizationState,
     SourceType,
     SwitchState,
     TelemetryChannel,
 )
-from .models import (
-    Edge,
-    EnergizationResult,
-    ImpactSet,
-    Node,
-    SourceNode,
-)
+
+from . import constants, ranges, topology
 from .ranges import PlausibilityRange, is_out_of_range
+from .results import ENERGIZED_STATES, EnergizationResult, ImpactSet
 from .topology import downstream_impact, solve_energization
 
 __all__ = [
@@ -39,9 +36,6 @@ __all__ = [
     "ENERGIZED_STATES",
     "Criticality",
     "TelemetryChannel",
-    "Node",
-    "SourceNode",
-    "Edge",
     "EnergizationResult",
     "ImpactSet",
     "PlausibilityRange",
@@ -49,9 +43,3 @@ __all__ = [
     "solve_energization",
     "downstream_impact",
 ]
-"""Electrical engineering analytics for S3M ElectricalTwin (advisory, read-only).
-
-Placeholder package. Analytics added here are preliminary and advisory only;
-nothing in this package may command or actuate any control system or field
-device.
-"""

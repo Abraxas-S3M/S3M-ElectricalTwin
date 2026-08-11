@@ -1,0 +1,9 @@
+{
+  "_synthetic_notice": "FAC-001 is a fully SYNTHETIC reference facility. It is NOT based on, derived from, or a model of any real facility, site, customer, partner, or vendor. Every value here is invented for testing (DataProvenance.SYNTHETIC).",
+  "id": "FAC-001",
+  "name": "FAC-001 synthetic mid-size manufacturing plant (hospital-grade backup)",
+  "nominal_frequency_hz": 60.0,
+  "nominal_voltage_levels": [13800.0, 400.0, 230.0],
+  "timezone": "UTC",
+  "sector_profile": "MANUFACTURING"
+}

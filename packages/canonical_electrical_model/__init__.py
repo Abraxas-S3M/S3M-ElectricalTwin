@@ -31,6 +31,7 @@ from .enums import (
     Criticality,
     DataProvenance,
     EdgeKind,
+    EnergizationState,
     HealthBand,
     ITICRegion,
     PhaseTag,
@@ -40,6 +41,7 @@ from .enums import (
     Severity,
     SourceType,
     SwitchState,
+    TelemetryChannel,
     ValidationState,
 )
 from .provenance import Provenance, Provenanced, ProvenanceSource
@@ -70,6 +72,7 @@ __all__ = [
     "Criticality",
     "DataProvenance",
     "EdgeKind",
+    "EnergizationState",
     "HealthBand",
     "ITICRegion",
     "PhaseTag",
@@ -79,6 +82,7 @@ __all__ = [
     "Severity",
     "SourceType",
     "SwitchState",
+    "TelemetryChannel",
     "ValidationState",
     # ratings
     "EdgeImpedance",
