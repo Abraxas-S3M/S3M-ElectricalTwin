@@ -70,6 +70,8 @@ structure:
 packages/canonical_electrical_model/   # canonical electrical asset model + safety invariant
 packages/electrical_engineering/       # electrical engineering analytics (advisory)
 packages/s3m_engine_contract/          # read-only engine contract types
+packages/reference_facility/           # synthetic reference facility FAC-001 (asset inventory)
+packages/reference_facility/data/      # FAC-001 asset inventory as JSON (single source of truth)
 packages/tests/                        # package-level tests
 services/electricaltwin-api/app/       # advisory read-only API service
 services/electricaltwin-api/tests/     # API service tests
@@ -117,6 +119,41 @@ python -m compileall -q packages services scripts
 
 These are the same five blocking checks run in CI: `lint`, `typecheck`,
 `test`, `safety-invariant`, and `compile`.
+
+## Reference facility FAC-001 (synthetic)
+
+`packages/reference_facility/` defines **FAC-001**, a synthetic mid-size
+manufacturing plant with hospital-grade backup. It exists so every later
+analytic work package has a realistic, fixed asset inventory to run against.
+
+> **FAC-001 is entirely synthetic. It is NOT based on, derived from, or a model
+> of any real facility, site, customer, partner, or vendor.** Every value is
+> invented for testing and is labelled `DataProvenance.SYNTHETIC`
+> (`ProvenanceSource.SYNTHETIC` on each node and rated quantity). Ratings carry
+> no manufacturer, model, or serial, so no vendor is ever named.
+
+- **~48 canonical nodes** (utility intake, MV/LV switchgear and breakers, two
+  2500 kVA transformers, motor control centres, motors and drives, chillers,
+  pumps, production lines, distribution boards, power-factor and harmonic
+  equipment, a diesel generator / ATS / UPS / battery backup chain, and a
+  rooftop PV array and inverter). The facility is defined as JSON under
+  `packages/reference_facility/data/` and validated into the canonical model at
+  load time.
+- **60 Hz nominal** (configurable for adjacent 50 Hz markets); voltage levels
+  13.8 kV / 400 V / 230 V.
+- **Deliberate sub-metering gap.** Sub-meters cover the MCC-001 and MCC-002
+  feeders and the DB-003 critical-loads feeder, but the **MCC-003** feeder
+  (utilities and HVAC) is *intentionally* left un-sub-metered. This is a test
+  fixture for the WP3 unmetered-load detector: the whole-plant balance leaves a
+  real, non-zero residual to find. **Do not "fix" it** by adding a meter (see
+  `packages/reference_facility/data/metering.json`).
+
+```python
+from packages.reference_facility import load_reference_facility
+
+facility = load_reference_facility()   # -> validated ReferenceFacility
+len(facility.nodes)                    # ~48 canonical ElectricalNode objects
+```
 
 ## Engine contract, grounding gate and API
 

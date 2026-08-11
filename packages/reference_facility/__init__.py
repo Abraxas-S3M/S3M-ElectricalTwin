@@ -11,6 +11,21 @@ the S3M ElectricalTwin. It provides:
 
 All data produced here is synthetic and advisory/observe-only; nothing in this
 package is a setpoint, command, or control action.
+"""Synthetic reference facility FAC-001.
+
+FAC-001 is a **synthetic** mid-size manufacturing plant with hospital-grade
+backup. It exists so every later analytic work package has a realistic, fixed
+asset inventory to run against. **It is NOT based on, derived from, or a model
+of any real facility, site, customer, partner, or vendor** -- every value is
+invented for testing and is labelled ``DataProvenance.SYNTHETIC``.
+
+The facility is defined as JSON under :mod:`packages.reference_facility.data`
+and validated into the canonical electrical model at load time via
+:func:`load_reference_facility`.
+
+The inventory contains a *deliberate* sub-metering gap on the MCC-003 branch
+(utilities and HVAC): it is a test fixture for the Work Package 3 unmetered-load
+detector and must not be "fixed" (see ``data/metering.json``).
 """
 
 from __future__ import annotations
@@ -39,4 +54,12 @@ __all__ = [
     "TelemetryReading",
     "generate",
     "topology_snapshot",
+from .loader import load_reference_facility
+from .models import MeteringPlan, ReferenceFacility, SubMeter
+
+__all__ = [
+    "load_reference_facility",
+    "ReferenceFacility",
+    "MeteringPlan",
+    "SubMeter",
 ]

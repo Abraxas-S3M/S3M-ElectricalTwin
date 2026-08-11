@@ -3,44 +3,78 @@
 Scenarios covered include: a single utility source, generator failover through
 an automatic transfer switch, an open tie breaker isolating a bus, UNKNOWN
 switch states yielding INDETERMINATE (never a guess), backfeed flagging, a
-cycle that terminates, source priority ordering, UPS/storage sourcing,
-function purity, and downstream_impact behaviour (criticality partitioning,
-leaf nodes, and N-1 redundancy).
+cycle that terminates, source priority ordering, UPS/battery sourcing,
+function purity, downstream_impact behaviour (criticality partitioning, leaf
+nodes, and N-1 redundancy), and the determinate non-conducting switch states
+(TRIPPED and RACKED_OUT).
+
+The solver operates on the canonical pydantic model types; these tests build
+:class:`ElectricalNode`, :class:`ElectricalEdge` and :class:`SourceNode`
+directly.
 """
 
 from __future__ import annotations
 
-from packages.electrical_engineering import (
+from packages.canonical_electrical_model import (
+    AssetType,
     Criticality,
-    Edge,
+    EdgeKind,
+    ElectricalEdge,
+    ElectricalNode,
     EnergizationState,
-    Node,
     SourceNode,
     SourceType,
     SwitchState,
+)
+from packages.electrical_engineering import (
     downstream_impact,
     solve_energization,
 )
+
+
+def node(node_id: str, criticality: Criticality | None = None) -> ElectricalNode:
+    return ElectricalNode(
+        id=node_id,
+        name=node_id,
+        asset_type=AssetType.BUS,
+        phases=3,
+        parent_facility_id="fac-1",
+        criticality=criticality,
+    )
 
 
 def util(node_id: str, priority: int = 0) -> SourceNode:
     return SourceNode(node_id=node_id, source_type=SourceType.UTILITY, priority=priority)
 
 
-def closed(a: str, b: str, edge_id: str = "") -> Edge:
-    return Edge(from_node_id=a, to_node_id=b, switch_state=SwitchState.CLOSED, edge_id=edge_id)
+def source(node_id: str, source_type: SourceType, priority: int = 0) -> SourceNode:
+    return SourceNode(node_id=node_id, source_type=source_type, priority=priority)
 
 
-def open_(a: str, b: str, edge_id: str = "") -> Edge:
-    return Edge(from_node_id=a, to_node_id=b, switch_state=SwitchState.OPEN, edge_id=edge_id)
+def edge(a: str, b: str, state: SwitchState, edge_id: str = "") -> ElectricalEdge:
+    return ElectricalEdge(
+        id=edge_id or f"{a}->{b}",
+        from_node_id=a,
+        to_node_id=b,
+        edge_kind=EdgeKind.FEEDER,
+        switch_state=state,
+    )
 
 
-def unknown(a: str, b: str, edge_id: str = "") -> Edge:
-    return Edge(from_node_id=a, to_node_id=b, switch_state=SwitchState.UNKNOWN, edge_id=edge_id)
+def closed(a: str, b: str, edge_id: str = "") -> ElectricalEdge:
+    return edge(a, b, SwitchState.CLOSED, edge_id)
+
+
+def open_(a: str, b: str, edge_id: str = "") -> ElectricalEdge:
+    return edge(a, b, SwitchState.OPEN, edge_id)
+
+
+def unknown(a: str, b: str, edge_id: str = "") -> ElectricalEdge:
+    return edge(a, b, SwitchState.UNKNOWN, edge_id)
 
 
 def test_single_utility_source_energizes_primary():
-    nodes = [Node("BUS"), Node("LOAD")]
+    nodes = [node("BUS"), node("LOAD")]
     edges = [closed("UTIL", "BUS"), closed("BUS", "LOAD")]
     sources = [util("UTIL")]
 
@@ -55,7 +89,7 @@ def test_single_utility_source_energizes_primary():
 
 def test_generator_failover_through_ats():
     # Utility feed to the ATS is open (utility lost); generator feed is closed.
-    nodes = [Node("ATS"), Node("LOAD")]
+    nodes = [node("ATS"), node("LOAD")]
     edges = [
         open_("UTIL", "ATS", "utility-breaker"),
         closed("GEN", "ATS", "gen-breaker"),
@@ -63,7 +97,7 @@ def test_generator_failover_through_ats():
     ]
     sources = [
         util("UTIL", priority=0),
-        SourceNode("GEN", SourceType.GENERATOR, priority=1),
+        source("GEN", SourceType.GENERATOR, priority=1),
     ]
 
     result = solve_energization(nodes, edges, sources)
@@ -75,7 +109,7 @@ def test_generator_failover_through_ats():
 
 def test_open_tie_breaker_isolates_bus():
     # BUS_B is only reachable through an open tie breaker: de-energized.
-    nodes = [Node("BUS_A"), Node("BUS_B")]
+    nodes = [node("BUS_A"), node("BUS_B")]
     edges = [closed("UTIL", "BUS_A"), open_("BUS_A", "BUS_B", "tie")]
     sources = [util("UTIL")]
 
@@ -87,7 +121,7 @@ def test_open_tie_breaker_isolates_bus():
 
 
 def test_closed_tie_breaker_energizes_second_bus():
-    nodes = [Node("BUS_A"), Node("BUS_B")]
+    nodes = [node("BUS_A"), node("BUS_B")]
     edges = [closed("UTIL", "BUS_A"), closed("BUS_A", "BUS_B", "tie")]
     sources = [util("UTIL")]
 
@@ -97,7 +131,7 @@ def test_closed_tie_breaker_energizes_second_bus():
 
 
 def test_unknown_switch_yields_indeterminate():
-    nodes = [Node("BUS"), Node("LOAD")]
+    nodes = [node("BUS"), node("LOAD")]
     edges = [unknown("UTIL", "BUS", "sw-unknown"), closed("BUS", "LOAD")]
     sources = [util("UTIL")]
 
@@ -111,7 +145,7 @@ def test_unknown_switch_yields_indeterminate():
 
 def test_unknown_never_resolved_as_energized_or_deenergized():
     # An INDETERMINATE node must be neither energized nor de-energized: no guess.
-    nodes = [Node("LOAD")]
+    nodes = [node("LOAD")]
     edges = [unknown("UTIL", "LOAD")]
     sources = [util("UTIL")]
 
@@ -126,7 +160,7 @@ def test_unknown_never_resolved_as_energized_or_deenergized():
 def test_definite_closed_path_wins_over_unknown_alternative():
     # LOAD reachable via a CLOSED path and, separately, an UNKNOWN path.
     # The definite path must win: ENERGIZED, not INDETERMINATE.
-    nodes = [Node("BUS_C"), Node("BUS_U"), Node("LOAD")]
+    nodes = [node("BUS_C"), node("BUS_U"), node("LOAD")]
     edges = [
         closed("UTIL", "BUS_C"),
         closed("BUS_C", "LOAD"),
@@ -142,7 +176,7 @@ def test_definite_closed_path_wins_over_unknown_alternative():
 
 def test_open_only_path_is_deenergized_not_indeterminate():
     # The only path is OPEN (not UNKNOWN): the node is definitely de-energized.
-    nodes = [Node("LOAD")]
+    nodes = [node("LOAD")]
     edges = [open_("UTIL", "LOAD")]
     sources = [util("UTIL")]
 
@@ -151,11 +185,48 @@ def test_open_only_path_is_deenergized_not_indeterminate():
     assert result["LOAD"].state is EnergizationState.DE_ENERGIZED
 
 
+def test_tripped_switch_is_determinate_deenergized_not_indeterminate():
+    # A TRIPPED breaker is a KNOWN non-conducting state. A node reachable only
+    # across it must be DE_ENERGIZED, never INDETERMINATE. Getting this wrong
+    # would blind the solver in exactly the situation it exists for.
+    nodes = [node("LOAD")]
+    edges = [edge("UTIL", "LOAD", SwitchState.TRIPPED)]
+    sources = [util("UTIL")]
+
+    result = solve_energization(nodes, edges, sources)
+
+    assert result["LOAD"].state is EnergizationState.DE_ENERGIZED
+    assert result["LOAD"].indeterminate_reason is None
+
+
+def test_racked_out_switch_is_determinate_deenergized_not_indeterminate():
+    # A RACKED_OUT breaker is likewise a KNOWN non-conducting state.
+    nodes = [node("LOAD")]
+    edges = [edge("UTIL", "LOAD", SwitchState.RACKED_OUT)]
+    sources = [util("UTIL")]
+
+    result = solve_energization(nodes, edges, sources)
+
+    assert result["LOAD"].state is EnergizationState.DE_ENERGIZED
+    assert result["LOAD"].indeterminate_reason is None
+
+
+def test_intermediate_switch_is_determinate_deenergized_not_indeterminate():
+    nodes = [node("LOAD")]
+    edges = [edge("UTIL", "LOAD", SwitchState.INTERMEDIATE)]
+    sources = [util("UTIL")]
+
+    result = solve_energization(nodes, edges, sources)
+
+    assert result["LOAD"].state is EnergizationState.DE_ENERGIZED
+    assert result["LOAD"].indeterminate_reason is None
+
+
 def test_backfeed_flagged_when_edge_traversed_against_direction():
     # Edge declared LOAD -> GEN, but energization flows GEN -> LOAD.
-    nodes = [Node("LOAD")]
-    edges = [Edge(from_node_id="LOAD", to_node_id="GEN", switch_state=SwitchState.CLOSED)]
-    sources = [SourceNode("GEN", SourceType.GENERATOR, priority=0)]
+    nodes = [node("LOAD")]
+    edges = [closed("LOAD", "GEN")]
+    sources = [source("GEN", SourceType.GENERATOR, priority=0)]
 
     result = solve_energization(nodes, edges, sources)
 
@@ -164,9 +235,9 @@ def test_backfeed_flagged_when_edge_traversed_against_direction():
 
 
 def test_no_backfeed_when_edge_traversed_with_direction():
-    nodes = [Node("LOAD")]
+    nodes = [node("LOAD")]
     edges = [closed("GEN", "LOAD")]
-    sources = [SourceNode("GEN", SourceType.GENERATOR, priority=0)]
+    sources = [source("GEN", SourceType.GENERATOR, priority=0)]
 
     result = solve_energization(nodes, edges, sources)
 
@@ -175,7 +246,7 @@ def test_no_backfeed_when_edge_traversed_with_direction():
 
 def test_cycle_terminates_and_resolves():
     # Ring topology with a tie breaker closing the loop must not loop forever.
-    nodes = [Node("A"), Node("B"), Node("C")]
+    nodes = [node("A"), node("B"), node("C")]
     edges = [
         closed("UTIL", "A"),
         closed("A", "B"),
@@ -194,11 +265,11 @@ def test_cycle_terminates_and_resolves():
 def test_source_priority_determines_state_when_both_reachable():
     # LOAD reachable from utility (priority 0) and generator (priority 1) over
     # closed paths: utility wins.
-    nodes = [Node("LOAD")]
+    nodes = [node("LOAD")]
     edges = [closed("UTIL", "LOAD"), closed("GEN", "LOAD")]
     sources = [
         util("UTIL", priority=0),
-        SourceNode("GEN", SourceType.GENERATOR, priority=1),
+        source("GEN", SourceType.GENERATOR, priority=1),
     ]
 
     result = solve_energization(nodes, edges, sources)
@@ -209,11 +280,11 @@ def test_source_priority_determines_state_when_both_reachable():
 
 def test_lower_priority_generator_wins_when_it_is_higher_priority_number_first():
     # Only the generator has a closed path; utility feed is open.
-    nodes = [Node("LOAD")]
+    nodes = [node("LOAD")]
     edges = [open_("UTIL", "LOAD"), closed("GEN", "LOAD")]
     sources = [
         util("UTIL", priority=0),
-        SourceNode("GEN", SourceType.GENERATOR, priority=1),
+        source("GEN", SourceType.GENERATOR, priority=1),
     ]
 
     result = solve_energization(nodes, edges, sources)
@@ -223,19 +294,19 @@ def test_lower_priority_generator_wins_when_it_is_higher_priority_number_first()
 
 
 def test_ups_source_state():
-    nodes = [Node("LOAD")]
+    nodes = [node("LOAD")]
     edges = [closed("UPS1", "LOAD")]
-    sources = [SourceNode("UPS1", SourceType.UPS, priority=0)]
+    sources = [source("UPS1", SourceType.UPS, priority=0)]
 
     result = solve_energization(nodes, edges, sources)
 
     assert result["LOAD"].state is EnergizationState.ENERGIZED_UPS
 
 
-def test_storage_source_reports_backup():
-    nodes = [Node("LOAD")]
+def test_battery_source_reports_backup():
+    nodes = [node("LOAD")]
     edges = [closed("BESS", "LOAD")]
-    sources = [SourceNode("BESS", SourceType.STORAGE, priority=0)]
+    sources = [source("BESS", SourceType.BATTERY, priority=0)]
 
     result = solve_energization(nodes, edges, sources)
 
@@ -243,7 +314,7 @@ def test_storage_source_reports_backup():
 
 
 def test_all_referenced_nodes_present_in_result():
-    nodes = [Node("BUS"), Node("LOAD")]
+    nodes = [node("BUS"), node("LOAD")]
     edges = [closed("UTIL", "BUS"), open_("BUS", "ORPHAN")]
     sources = [util("UTIL")]
 
@@ -253,8 +324,8 @@ def test_all_referenced_nodes_present_in_result():
 
 
 def test_deenergized_node_has_empty_path_and_no_source():
-    nodes = [Node("ISLAND")]
-    edges: list[Edge] = []
+    nodes = [node("ISLAND")]
+    edges: list[ElectricalEdge] = []
     sources = [util("UTIL")]
 
     result = solve_energization(nodes, edges, sources)
@@ -265,7 +336,7 @@ def test_deenergized_node_has_empty_path_and_no_source():
 
 
 def test_solver_is_pure_inputs_not_mutated():
-    nodes = [Node("BUS"), Node("LOAD")]
+    nodes = [node("BUS"), node("LOAD")]
     edges = [closed("UTIL", "BUS"), closed("BUS", "LOAD")]
     sources = [util("UTIL")]
     nodes_snapshot = list(nodes)
@@ -285,9 +356,9 @@ def test_solver_is_pure_inputs_not_mutated():
 
 def test_downstream_impact_partitions_by_criticality():
     nodes = [
-        Node("MAIN_BUS"),
-        Node("L1", Criticality.CRITICAL),
-        Node("L2", Criticality.ESSENTIAL),
+        node("MAIN_BUS"),
+        node("L1", Criticality.CRITICAL),
+        node("L2", Criticality.HIGH),
     ]
     edges = [
         closed("UTIL", "MAIN_BUS"),
@@ -299,15 +370,15 @@ def test_downstream_impact_partitions_by_criticality():
     impact = downstream_impact("MAIN_BUS", nodes, edges, sources)
 
     assert impact.nodes_of(Criticality.CRITICAL) == frozenset({"L1"})
-    assert impact.nodes_of(Criticality.ESSENTIAL) == frozenset({"L2"})
+    assert impact.nodes_of(Criticality.HIGH) == frozenset({"L2"})
     assert impact.all_nodes == frozenset({"L1", "L2"})
     assert "MAIN_BUS" not in impact
 
 
 def test_downstream_impact_on_leaf_node_is_empty():
     nodes = [
-        Node("MAIN_BUS"),
-        Node("L1", Criticality.CRITICAL),
+        node("MAIN_BUS"),
+        node("L1", Criticality.CRITICAL),
     ]
     edges = [closed("UTIL", "MAIN_BUS"), closed("MAIN_BUS", "L1")]
     sources = [util("UTIL")]
@@ -321,7 +392,7 @@ def test_downstream_impact_on_leaf_node_is_empty():
 
 def test_downstream_impact_excludes_redundantly_fed_nodes():
     # LOAD is fed from two buses; losing one bus does not de-energize it.
-    nodes = [Node("BUS_A"), Node("BUS_B"), Node("LOAD", Criticality.CRITICAL)]
+    nodes = [node("BUS_A"), node("BUS_B"), node("LOAD", Criticality.CRITICAL)]
     edges = [
         closed("UTIL", "BUS_A"),
         closed("UTIL", "BUS_B"),
@@ -336,7 +407,7 @@ def test_downstream_impact_excludes_redundantly_fed_nodes():
 
 
 def test_downstream_impact_of_source_deenergizes_dependents():
-    nodes = [Node("BUS"), Node("LOAD", Criticality.LIFE_SAFETY)]
+    nodes = [node("BUS"), node("LOAD", Criticality.LIFE_SAFETY)]
     edges = [closed("UTIL", "BUS"), closed("BUS", "LOAD")]
     sources = [util("UTIL")]
 
@@ -348,7 +419,7 @@ def test_downstream_impact_of_source_deenergizes_dependents():
 
 def test_indeterminate_does_not_propagate_backfeed_guess():
     # Confirm indeterminate nodes carry a path and reason but stay uncertain.
-    nodes = [Node("A"), Node("B")]
+    nodes = [node("A"), node("B")]
     edges = [closed("UTIL", "A"), unknown("A", "B", "maybe")]
     sources = [util("UTIL")]
 
