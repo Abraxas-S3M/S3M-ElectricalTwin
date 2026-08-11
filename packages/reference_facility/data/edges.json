@@ -1,0 +1,49 @@
+{
+  "_synthetic_notice": "SYNTHETIC topology for FAC-001 (DataProvenance.SYNTHETIC). A directed graph with live switching state. The bus tie (CB-TIE-001) and the generator transfer path (ATS-001) are NORMALLY OPEN.",
+  "edges": [
+    {"id": "E-UTIL-SWGRMV", "from_node_id": "UTIL-001", "to_node_id": "SWGR-MV-001", "edge_kind": "SOURCE_CONNECTION", "switch_state": "CLOSED", "switching_device_node_id": "CB-MV-INC-001", "ampacity_a": 1250.0},
+    {"id": "E-SWGRMV-TX1", "from_node_id": "SWGR-MV-001", "to_node_id": "TX-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "switching_device_node_id": "CB-MV-TX1", "ampacity_a": 630.0},
+    {"id": "E-SWGRMV-TX2", "from_node_id": "SWGR-MV-001", "to_node_id": "TX-002", "edge_kind": "FEEDER", "switch_state": "CLOSED", "switching_device_node_id": "CB-MV-TX2", "ampacity_a": 630.0},
+    {"id": "E-TX1-SWGRLV1", "from_node_id": "TX-001", "to_node_id": "SWGR-LV-001", "edge_kind": "TRANSFORMER_WINDING", "switch_state": "CLOSED", "switching_device_node_id": "CB-LV-INC-001", "ampacity_a": 4000.0},
+    {"id": "E-TX2-SWGRLV2", "from_node_id": "TX-002", "to_node_id": "SWGR-LV-002", "edge_kind": "TRANSFORMER_WINDING", "switch_state": "CLOSED", "switching_device_node_id": "CB-LV-INC-002", "ampacity_a": 4000.0},
+    {"id": "E-TIE", "from_node_id": "SWGR-LV-001", "to_node_id": "SWGR-LV-002", "edge_kind": "TIE", "switch_state": "OPEN", "switching_device_node_id": "CB-TIE-001", "ampacity_a": 4000.0},
+
+    {"id": "E-LV1-MCC1", "from_node_id": "SWGR-LV-001", "to_node_id": "MCC-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 800.0},
+    {"id": "E-LV1-PL1", "from_node_id": "SWGR-LV-001", "to_node_id": "PL-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 630.0},
+    {"id": "E-LV1-DB1", "from_node_id": "SWGR-LV-001", "to_node_id": "DB-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 250.0},
+    {"id": "E-LV1-DB2", "from_node_id": "SWGR-LV-001", "to_node_id": "DB-002", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 250.0},
+    {"id": "E-LV1-CAP", "from_node_id": "SWGR-LV-001", "to_node_id": "CAP-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 630.0},
+    {"id": "E-INV-LV1", "from_node_id": "INV-001", "to_node_id": "SWGR-LV-001", "edge_kind": "SOURCE_CONNECTION", "switch_state": "CLOSED", "ampacity_a": 700.0},
+
+    {"id": "E-LV2-MCC2", "from_node_id": "SWGR-LV-002", "to_node_id": "MCC-002", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 800.0},
+    {"id": "E-LV2-MCC3", "from_node_id": "SWGR-LV-002", "to_node_id": "MCC-003", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 1000.0},
+    {"id": "E-LV2-PL2", "from_node_id": "SWGR-LV-002", "to_node_id": "PL-002", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 630.0},
+    {"id": "E-LV2-HF", "from_node_id": "SWGR-LV-002", "to_node_id": "HF-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 250.0},
+    {"id": "E-LV2-UPS", "from_node_id": "SWGR-LV-002", "to_node_id": "UPS-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 400.0},
+    {"id": "E-UPS-DB3", "from_node_id": "UPS-001", "to_node_id": "DB-003", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 400.0},
+    {"id": "E-BATT-UPS", "from_node_id": "BATT-001", "to_node_id": "UPS-001", "edge_kind": "SOURCE_CONNECTION", "switch_state": "CLOSED", "ampacity_a": 400.0},
+    {"id": "E-GEN-ATS", "from_node_id": "GEN-001", "to_node_id": "ATS-001", "edge_kind": "SOURCE_CONNECTION", "switch_state": "OPEN", "ampacity_a": 2500.0},
+    {"id": "E-ATS-LV2", "from_node_id": "ATS-001", "to_node_id": "SWGR-LV-002", "edge_kind": "FEEDER", "switch_state": "OPEN", "switching_device_node_id": "ATS-001", "ampacity_a": 2500.0},
+
+    {"id": "E-MCC1-M1", "from_node_id": "MCC-001", "to_node_id": "M-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 100.0},
+    {"id": "E-MCC1-VFD1", "from_node_id": "MCC-001", "to_node_id": "VFD-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 200.0},
+    {"id": "E-VFD1-M2", "from_node_id": "VFD-001", "to_node_id": "M-002", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 200.0},
+    {"id": "E-MCC1-M3", "from_node_id": "MCC-001", "to_node_id": "M-003", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 80.0},
+
+    {"id": "E-MCC2-VFD2", "from_node_id": "MCC-002", "to_node_id": "VFD-002", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 315.0},
+    {"id": "E-VFD2-M4", "from_node_id": "VFD-002", "to_node_id": "M-004", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 315.0},
+    {"id": "E-MCC2-M5", "from_node_id": "MCC-002", "to_node_id": "M-005", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 40.0},
+    {"id": "E-MCC2-VFD3", "from_node_id": "MCC-002", "to_node_id": "VFD-003", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 160.0},
+    {"id": "E-VFD3-M6", "from_node_id": "VFD-003", "to_node_id": "M-006", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 160.0},
+
+    {"id": "E-MCC3-VFD4", "from_node_id": "MCC-003", "to_node_id": "VFD-004", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 250.0},
+    {"id": "E-VFD4-M7", "from_node_id": "VFD-004", "to_node_id": "M-007", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 250.0},
+    {"id": "E-MCC3-M8", "from_node_id": "MCC-003", "to_node_id": "M-008", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 63.0},
+    {"id": "E-MCC3-CH1", "from_node_id": "MCC-003", "to_node_id": "CH-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 800.0},
+    {"id": "E-MCC3-CH2", "from_node_id": "MCC-003", "to_node_id": "CH-002", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 800.0},
+    {"id": "E-MCC3-AC1", "from_node_id": "MCC-003", "to_node_id": "AC-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 200.0},
+    {"id": "E-MCC3-P1", "from_node_id": "MCC-003", "to_node_id": "P-001", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 100.0},
+    {"id": "E-MCC3-P2", "from_node_id": "MCC-003", "to_node_id": "P-002", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 80.0},
+    {"id": "E-MCC3-P3", "from_node_id": "MCC-003", "to_node_id": "P-003", "edge_kind": "FEEDER", "switch_state": "CLOSED", "ampacity_a": 125.0}
+  ]
+}

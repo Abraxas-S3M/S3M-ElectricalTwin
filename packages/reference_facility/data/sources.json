@@ -1,0 +1,10 @@
+{
+  "_synthetic_notice": "SYNTHETIC supply sources for FAC-001 (DataProvenance.SYNTHETIC). Lower priority number = more preferred supply.",
+  "sources": [
+    {"node_id": "UTIL-001", "source_type": "UTILITY", "rated_kva": 5000.0, "priority": 0},
+    {"node_id": "GEN-001", "source_type": "GENERATOR", "rated_kva": 1500.0, "priority": 1},
+    {"node_id": "INV-001", "source_type": "SOLAR_PV", "rated_kva": 450.0, "priority": 2},
+    {"node_id": "UPS-001", "source_type": "UPS", "rated_kva": 200.0, "priority": 2},
+    {"node_id": "BATT-001", "source_type": "BATTERY", "rated_kva": 200.0, "priority": 3}
+  ]
+}

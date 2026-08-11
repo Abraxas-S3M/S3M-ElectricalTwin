@@ -1,0 +1,14 @@
+{
+  "_synthetic_notice": "SYNTHETIC sub-metering plan for FAC-001 (DataProvenance.SYNTHETIC).",
+  "submeters": [
+    {"meter_node_id": "MTR-MAIN-001", "measures_node_id": "UTIL-001"},
+    {"meter_node_id": "MTR-LV-001", "measures_node_id": "SWGR-LV-001"},
+    {"meter_node_id": "MTR-LV-002", "measures_node_id": "SWGR-LV-002"},
+    {"meter_node_id": "MTR-MCC-001", "measures_node_id": "MCC-001"},
+    {"meter_node_id": "MTR-MCC-002", "measures_node_id": "MCC-002"},
+    {"meter_node_id": "MTR-DB-003", "measures_node_id": "DB-003"}
+  ],
+  "intentional_unmetered_branch_id": "MCC-003",
+  "intentional_gap_is_test_fixture": true,
+  "note": "INTENTIONAL METERING GAP -- DO NOT 'FIX'. Sub-meters are installed on the MCC-001 and MCC-002 feeders and on the DB-003 critical-loads feeder, but the MCC-003 feeder (utilities and HVAC: chillers, air compressor, pumps and drive-fed motor) is DELIBERATELY left without a dedicated sub-meter. This creates a real unmetered load path: the whole-plant / LV-board meters capture the total, yet no sub-meter directly measures MCC-003, so an energy balance leaves a non-zero residual. It is a deliberate test fixture for the WP3 unmetered-load detector and MUST NOT be 'corrected' by adding an MTR-MCC-003 meter."
+}
